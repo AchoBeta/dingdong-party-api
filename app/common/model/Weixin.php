@@ -6,7 +6,7 @@ namespace app\common\model;
 
 use think\Model;
 
-class UserBranch extends Model
+class Weixin extends Model
 {
     protected $autoWriteTimestamp = true;
 }

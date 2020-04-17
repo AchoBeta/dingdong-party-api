@@ -21,6 +21,8 @@ class Admin
         $dataArray['password'] = md5($dataArray['password'].config('secure.token_salt'));
         if($is_exist)
         {
+            $dataArray['ip'] = request()->ip();
+            $dataArray['last_login_time'] = time();
             $res = $is_exist->save($dataArray);
         }else{
             throw new AdminException();

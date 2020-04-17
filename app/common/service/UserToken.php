@@ -1,11 +1,12 @@
 <?php
 namespace app\common\service;
 
+use app\common\model\Weixin;
 use app\lib\enum\ScopeEnum;
 use app\lib\exception\TokenException;
 use app\lib\exception\WechatException;
 use think\Exception;
-use app\api\model\User as UserModel;
+use app\common\model\User as UserModel;
 
 class UserToken extends Token
 {
@@ -45,7 +46,7 @@ class UserToken extends Token
 //        生成令牌，准备缓存数据，写入缓存(缓存读取速度快，但维护成本高)key：令牌；value：wxResult、uid、scope(权限标志)、
 //        把令牌返回客户端
         $openid = $wxResult['openid'];
-        $user = UserModel::getByOpenID($openid);
+        $user = Weixin::getByOpenId($openid);
 //        if($user)
 //        {
 //            $uid = $user->id;
@@ -81,8 +82,9 @@ class UserToken extends Token
     }
     private function newUser($openid)
     {
-        $user = UserModel::create([
-            'openid'=>$openid
+        $user = Weixin::create([
+            'openId'=>$openid,
+            'last_login_ip'=>request()->ip()
         ]);
         return $user->id;
     }

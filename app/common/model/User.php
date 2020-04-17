@@ -8,6 +8,7 @@ use think\Model;
 
 class User extends Model
 {
+    protected $autoWriteTimestamp = true;
     public function group()
     {
         return $this->belongsTo(Group::class,'group_id');

@@ -8,6 +8,7 @@ use think\Model;
 
 class Admin extends Model
 {
+    protected $autoWriteTimestamp = true;
     public static function checkPwdByCasid($data)
     {
         $admin = self::where('casid',$data['casid'])->find();

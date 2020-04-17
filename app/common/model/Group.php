@@ -8,6 +8,7 @@ use think\Model;
 
 class Group extends Model
 {
+    protected $autoWriteTimestamp = true;
     public function user_branch()
     {
         return $this->hasMany(UserBranch::class,'group_id');

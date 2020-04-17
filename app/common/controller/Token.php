@@ -13,7 +13,7 @@ use Exception;
 class Token
 {
     protected $middleware = [
-        CheckLoginCount::class=>['only'=>['adminToken']]
+//        CheckLoginCount::class=>['only'=>['adminToken']]
     ];
     public function getToken($code = '')
     {
@@ -21,7 +21,7 @@ class Token
         $ut = new UserToken($code);
         $token = $ut->get();
         return json([
-            'token'=>$token
+            'Authorization'=>$token
         ]);
     }
     public function adminToken()
@@ -30,12 +30,12 @@ class Token
         $at = new AdminToken();
         $token = $at->get();
         return json([
-            'token'=>$token
+            'Authorization'=>$token
         ]);
     }
     public function logout()
     {
-        $token = request()->header('token');
+        $token = request()->header('Authorization');
         if(!$token)
         {
             throw new TokenException(['msg'=>'token缺失']);
@@ -50,6 +50,20 @@ class Token
             throw new SuccessMessage();
         }else{
             throw new Exception('token撤销失败');
+        }
+    }
+    public function checkLogin()
+    {
+        $token = request()->header('Authorization');
+        if(!$token)
+        {
+            throw new TokenException(['msg'=>'Authorization缺失']);
+        }
+        if(!cache($token))
+        {
+            throw new TokenException(['msg'=>'登陆已过期或尚未登陆']);
+        }else{
+            throw new SuccessMessage(['msg'=>'登陆状态正常']);
         }
     }
 }

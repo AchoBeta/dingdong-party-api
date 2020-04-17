@@ -8,6 +8,7 @@ use think\Model;
 
 class UserScore extends Model
 {
+    protected $autoWriteTimestamp = true;
     public function user()
     {
         return $this->belongsTo(User::class,'user_id');

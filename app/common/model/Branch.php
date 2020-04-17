@@ -8,6 +8,7 @@ use think\Model;
 
 class Branch extends Model
 {
+    protected $autoWriteTimestamp = true;
     public function general_branch()
     {
         return $this->belongsTo(GeneralBranch::class,'general_branch_id','id');

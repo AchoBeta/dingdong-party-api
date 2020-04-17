@@ -6,9 +6,9 @@ Route::pattern([
 ]);
 Route::get("hello/[:name]", 'v1.Banner/hello');
 
-Route::post(':version/token/user',':version.Token/getToken');
-Route::post(':version/token/admin',':version.Token/adminToken');
-Route::post(':version/token/logout',':version.Token/logout');
+Route::post('token/user','Token/getToken');
+Route::post('token/admin','Token/adminToken');
+Route::post('token/logout','Token/logout');
 
 
 
