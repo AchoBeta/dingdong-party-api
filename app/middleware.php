@@ -8,4 +8,5 @@ return [
     // Session初始化
     // \think\middleware\SessionInit::class
 //    \app\lib\http\TestMiddleware::class
+    \think\middleware\AllowCrossDomain::class
 ];
