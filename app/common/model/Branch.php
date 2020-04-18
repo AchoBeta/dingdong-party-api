@@ -5,9 +5,11 @@ namespace app\common\model;
 
 
 use think\Model;
+use think\model\concern\SoftDelete;
 
 class Branch extends Model
 {
+    use SoftDelete;
     protected $autoWriteTimestamp = true;
     public function general_branch()
     {

@@ -5,10 +5,12 @@ namespace app\common\model;
 
 
 use think\Model;
+use think\model\concern\SoftDelete;
 
 class User extends Model
 {
     protected $autoWriteTimestamp = true;
+    use SoftDelete;
     public function group()
     {
         return $this->belongsTo(Group::class,'group_id');
