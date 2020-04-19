@@ -69,6 +69,8 @@ class AdminToken extends Token
         $CachedValue['scope'] = ScopeEnum::Admin;
         $CachedValue['uid'] = $data->id;
         $CachedValue['last_login_time'] = $data->last_login_time;
+        $CachedValue['general_branch_id'] = $data->general_branch_id??'';
+        $CachedValue['branch_id'] = $data->branch_id??'';
         return $CachedValue;
     }
 
