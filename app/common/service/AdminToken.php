@@ -56,7 +56,7 @@ class AdminToken extends Token
     {
         $key = self::generateToken();
         $value = json_encode($CachedValue);
-        $expire_in = config('setting.token_expire_in');
+        $expire_in = config('setting.token_expire_in')??7200;
         $request = cache($key,$value,$expire_in);
         if(!$request)
         {
