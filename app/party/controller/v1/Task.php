@@ -21,7 +21,7 @@ class Task
         $res = TaskModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))
             ->withCount(['user_branch'=>'user_count'])
             ->select();
-        return $res;
+        return json($res);
     }
 
     /**
@@ -43,7 +43,7 @@ class Task
             ->with(['user_branch'])
             ->withCount(['user_branch' => 'total'])
             ->find($id);
-        return $res;
+        return json($res);
     }
 
     /**
@@ -57,7 +57,7 @@ class Task
         $res = TaskModel::create(input());
         if($res)
         {
-            return $res;
+            return json($res);
         }else{
             throw new TaskException(['msg'=>'任务创建错误','errorCode'=>40001]);
         }

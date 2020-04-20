@@ -9,12 +9,18 @@ use think\Model;
 
 class Task extends Model
 {
+    protected $hidden = [
+        'create_time',
+        'update_time',
+        'delete_time',
+        'general_branch_id'
+    ];
     protected $autoWriteTimestamp = true;
     public function onBeforeInsert($model)
     {
         $model->setAttr('general_branch_id',Token::getCurrentTokenVar('general_branch_id'));
     }
-    public function user_branch()
+    public function userBranch()
     {
         return $this->belongsToMany(UserBranch::class,'user_state','casid','task_id');
     }
