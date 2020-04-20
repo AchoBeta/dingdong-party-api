@@ -16,11 +16,11 @@ class Task extends Model
     }
     public function user_branch()
     {
-        return $this->belongsToMany(UserBranch::class,UserState::class,'casid','task_id');
+        return $this->belongsToMany(UserBranch::class,UserState::class,'task_id','casid');
     }
     public function user()
     {
-        return $this->belongsToMany(User::class,UserState::class,'casid','task_id');
+        return $this->belongsToMany(User::class,UserState::class,'task_id','casid');
     }
 
 }
