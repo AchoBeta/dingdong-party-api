@@ -21,7 +21,7 @@ class Stage
         $res = StageModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))
             ->with(['task'])
             ->select();
-        return $res;
+        return json($res);
     }
 
     /**
@@ -33,10 +33,10 @@ class Stage
     public function read($id)
     {
         $res = StageModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))
-            ->with(['user_branch'])
-            ->withCount(['user_state' => 'total'])
+            ->with(['userBranch'])
+            ->withCount(['userState' => 'total'])
             ->find($id);
-        return $res;
+        return json($res);
     }
 
     /**

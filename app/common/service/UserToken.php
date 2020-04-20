@@ -46,6 +46,7 @@ class UserToken extends Token
 //        生成令牌，准备缓存数据，写入缓存(缓存读取速度快，但维护成本高)key：令牌；value：wxResult、uid、scope(权限标志)、
 //        把令牌返回客户端
         $openid = $wxResult['openid'];
+
         $user = Weixin::getByOpenId($openid);
 //        if($user)
 //        {

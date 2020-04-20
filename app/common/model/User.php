@@ -4,6 +4,8 @@
 namespace app\common\model;
 
 
+use app\lib\exception\UserAddException;
+use think\Exception;
 use think\Model;
 use think\model\concern\SoftDelete;
 
@@ -30,5 +32,19 @@ class User extends Model
     public function score()
     {
         return $this->hasOne(UserScore::class,'user_id');
+    }
+    public static function add($userData){
+        $openId = $userData['openId'];
+        $casId = $userData['casid'];
+        $openIdHasBind = self::where("openId",$openId)->find();
+        if($openIdHasBind){
+            throw new UserAddException(['msg'=>"openId已经被绑定"]);
+        }
+        $casIdHasBind = self::where("casid",$casId)->find();
+        if($casIdHasBind){
+            throw new UserAddException(['msg'=>"学号已经被绑定"]);
+        }
+        $res = (new User())->save($userData);
+        return $res;
     }
 }
