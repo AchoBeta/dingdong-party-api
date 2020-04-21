@@ -9,36 +9,26 @@ use think\Model;
 
 class Stage extends Model
 {
-    protected $hidden = [
-        'create_time',
-        'update_time',
-        'delete_time',
-        'general_branch_id'
-    ];
     protected $autoWriteTimestamp = true;
     public function onBeforeInsert($model)
     {
         $model->setAttr('general_branch_id',Token::getCurrentTokenVar('general_branch_id'));
     }
-    public function userBranch()
+    public function user_branch()
     {
-        return $this->belongsToMany(UserBranch::class,'user_state','casid','stage_id');
+        return $this->belongsToMany(UserBranch::class,UserState::class,'casid','stage_id');
     }
     public function user()
     {
-        return $this->belongsToMany(User::class,'user_state','casid','stage_id');
+        return $this->belongsToMany(User::class,UserState::class,'casid','stage_id');
     }
-    public function userState()
+    public function user_state()
     {
         return $this->hasMany(UserState::class,'stage_id','id');
     }
     public function task()
     {
-        return $this->hasMany(Task::class,'stage_id','id');
-    }
-    public static function getNextOrder($id){
-        $order = self::where('id',$id)->find()->value("order")+1;
-        return self::where('order',$order)->find();
+        return $this->hasMany(Task::class,'task_id','id');
     }
 
 }
