@@ -14,5 +14,9 @@ class UserState extends Model
     {
         $model->setAttr('general_branch_id',Token::getCurrentTokenVar('general_branch_id'));
     }
+    public function user_branch()
+    {
+        return $this->belongsTo('user_branch','casid','id');
+    }
 
 }

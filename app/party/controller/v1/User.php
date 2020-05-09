@@ -14,14 +14,14 @@ class User
     {
         $list = UserModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))->hidden([''])
             ->select();
-        return $list;
+        return json($list);
     }
 
     public function read($id)
     {
         $list = UserModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))->hidden(['openId'])
             ->find($id);
-        return $list;
+        return json($list);
     }
 
     public function save()
