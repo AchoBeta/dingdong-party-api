@@ -28,7 +28,7 @@ class Stage extends Model
     }
     public function task()
     {
-        return $this->hasMany(Task::class,'task_id','id');
+        return $this->hasMany(Task::class,'stage_id','id');
     }
 
 }
