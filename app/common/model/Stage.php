@@ -14,17 +14,17 @@ class Stage extends Model
     {
         $model->setAttr('general_branch_id',Token::getCurrentTokenVar('general_branch_id'));
     }
-    public function user_branch()
+    public function userBranch()
     {
-        return $this->belongsToMany(UserBranch::class,UserState::class,'casid','stage_id');
+        return $this->belongsToMany('user_branch','user_state','casid','stage_id');
     }
     public function user()
     {
-        return $this->belongsToMany(User::class,UserState::class,'casid','stage_id');
+        return $this->belongsToMany(User::class,'user_state','casid','stage_id');
     }
-    public function user_state()
+    public function userState()
     {
-        return $this->hasMany(UserState::class,'stage_id','id');
+        return $this->hasMany('user_state','stage_id','id');
     }
     public function task()
     {
