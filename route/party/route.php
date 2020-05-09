@@ -21,6 +21,7 @@ Route::delete(':version/stage/:id', ':version.Stage/delete');
 
 //用户当前状态
 Route::put(':version/state',':version.UserState/update');
+Route::put(':version/state/next_mission',':version.UserState/next_mission');
 
 //任务相关路由
 Route::get(':version/task', ':version.Task/index');

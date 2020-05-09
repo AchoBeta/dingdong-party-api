@@ -18,5 +18,13 @@ class UserState extends Model
     {
         return $this->belongsTo('user_branch','casid','id');
     }
+    public function stage()
+    {
+        return $this->belongsTo(Stage::class,'stage_id','id');
+    }
+    public function task()
+    {
+        return $this->belongsTo(Task::class,'task_id','id');
+    }
 
 }
