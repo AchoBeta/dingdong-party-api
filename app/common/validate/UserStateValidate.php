@@ -15,6 +15,6 @@ class UserStateValidate extends BaseValidate
         'task_id'=>'任务参数异常'
     ];
     protected $scene = [
-        'update'=>['stage_id','task_id']
+        'update'=>['stage_id','task_id','casid']
     ];
 }
