@@ -28,5 +28,7 @@ class Task extends Model
     {
         return $this->belongsToMany(User::class,'user_state','casid','task_id');
     }
-
+    public static function getNextById($id){
+        return self::where(['id'=>$id+1])->find();
+    }
 }
