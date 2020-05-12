@@ -23,7 +23,9 @@
         "topthink/think-view": "^1.0",
         "curl/curl": "^2.2",
       "ext-curl": "*",
-      "ext-json": "*"
+      "ext-json": "*",
+        "jaeger/querylist": "^4.2",
+        "phpoffice/phpword": "^0.17.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

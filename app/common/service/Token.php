@@ -24,7 +24,7 @@ class Token
     {
         $token = Request::instance()->header('Authorization');
         $vars = cache($token);
-        if(!$vars)
+        if(!$token||!$vars)
         {
             throw new TokenException();
         }else{
