@@ -40,7 +40,7 @@ class Task
     public function read($id)
     {
         $res = TaskModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))
-            ->with(['user_branch'])
+            ->with(['user'])
             ->withCount(['user_branch' => 'total'])
             ->find($id);
         return json($res);
