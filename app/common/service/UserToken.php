@@ -76,6 +76,8 @@ class UserToken extends Token
     }
     private function prepareCachedValue($wxResult,$uid)
     {
+        $model = UserModel::find($uid);
+        $CachedValue['general_branch_id'] = $model->getData('general_branch_id')??null;
         $CachedValue = $wxResult;
         $CachedValue['uid'] = $uid;
         $CachedValue['scope'] = ScopeEnum::User;

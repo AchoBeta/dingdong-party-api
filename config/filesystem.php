@@ -19,6 +19,26 @@ return [
             // 可见性
             'visibility' => 'public',
         ],
+        'image' => [
+            // 磁盘类型
+            'type'       => 'local',
+            // 磁盘路径
+            'root'       => app()->getRootPath() . 'public/image',
+            // 磁盘路径对应的外部URL路径
+            'url'        => '/image',
+            // 可见性
+            'visibility' => 'public',
+        ],
+        'file' => [
+            // 磁盘类型
+            'type'       => 'local',
+            // 磁盘路径
+            'root'       => app()->getRootPath() . 'public/file',
+            // 磁盘路径对应的外部URL路径
+            'url'        => '/file',
+            // 可见性
+            'visibility' => 'public',
+        ],
         // 更多的磁盘配置信息
     ],
 ];
