@@ -29,3 +29,8 @@ Route::get(':version/task/:id', ':version.Task/read');
 Route::post(':version/task', ':version.Task/save');
 Route::put(':version/task/:id', ':version.Task/update');
 Route::delete(':version/task/:id', ':version.Task/delete');
+
+//材料审核
+Route::get(':version/taskDetail', ':version.Detail/taskDetail');
+Route::post(':version/taskAudit', ':version.Detail/audit');
+
