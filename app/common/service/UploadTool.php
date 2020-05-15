@@ -59,7 +59,8 @@ class UploadTool
                     'file_mime' => $file->getOriginalMime(),
                     'file_name' => $file->getOriginalName(),
                     'ext' => $file->getOriginalExtension(),
-                    'size' => round($file->getSize()/1024/1024,2)
+                    'size' => round($file->getSize()/1024/1024,2),
+                    'ip'=>request()->ip()
                 ];
             }
             $upload = new Upload();

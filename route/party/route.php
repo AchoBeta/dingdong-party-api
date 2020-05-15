@@ -33,4 +33,5 @@ Route::delete(':version/task/:id', ':version.Task/delete');
 //材料审核
 Route::get(':version/taskDetail', ':version.Detail/taskDetail');
 Route::post(':version/taskAudit', ':version.Detail/audit');
+Route::post(':version/uploadDetailDoc', ':version.Detail/uploadDetailDoc');
 

@@ -4,8 +4,10 @@
 namespace app\party\controller\v1;
 
 use app\common\model\UserDetail;
+use app\common\service\UploadTool;
 use app\lib\exception\ParameterException;
 use app\lib\exception\SuccessMessage;
+use app\lib\exception\UploadException;
 
 /**
  * Class Detail
@@ -65,6 +67,29 @@ class Detail
             throw new SuccessMessage();
         }else{
             throw new ParameterException();
+        }
+    }
+    public function uploadDetailDoc($id)
+    {
+        $files = request()->file();
+        if(!($files??null))
+        {
+            throw new ParameterException();
+        }
+        $tool = new UploadTool();
+        $upload_res = $tool->file_upload($files);
+        $model = UserDetail::find($id);
+        if($model->isEmpty())
+        {
+            throw new ParameterException();
+        }
+        $model->audit_url = $upload_res[0]['url'];
+        $res = $model->save();
+        if($res)
+        {
+            return json($upload_res);
+        }else{
+            throw new UploadException();
         }
     }
 }
