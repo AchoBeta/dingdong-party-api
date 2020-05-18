@@ -27,6 +27,19 @@ class UserState
 //            ->with(['user_branch'])
 //            ->find();
 //    }
+    /**
+     * Notes:更新用户当前所处状态
+     * User: charl
+     * Date: 2020/5/18
+     * Time: 11:14
+     * @throws Exception
+     * @throws ParameterException
+     * @throws SuccessMessage
+     * @throws \app\lib\exception\TokenException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function update()
     {
         $validate = new UserStateValidate();
@@ -48,6 +61,58 @@ class UserState
             throw new ParameterException();
         }
     }
+
+    /**
+     * Notes:重置用户状态
+     * User: charl
+     * Date: 2020/5/18
+     * Time: 11:28
+     * @param $casid
+     * @throws Exception
+     * @throws ParameterException
+     * @throws SuccessMessage
+     * @throws \app\lib\exception\TokenException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function resetState($casid)
+    {
+        $model = UserStateModel::where(['casid'=>$casid,'general_branch_id'=>Token::getCurrentTokenVar('general_branch_id')])
+            ->find();
+        if(!$model)
+        {
+            throw new ParameterException();
+        }
+        $stage_model = \app\common\model\Stage::where(['order'=>1,'general_branch_id'=>Token::getCurrentTokenVar('general_branch_id')])->find();
+        $stage_id = $stage_model->id;
+        $task_model = \app\common\model\Task::where(['stage_id'=>$stage_id,'order'=>1]);
+        $task_id = $task_model->id;
+        $model->stage_id = $stage_id;
+        $model->task_id = $task_id;
+        $res = $model->save();
+        if ($res)
+        {
+            throw new SuccessMessage();
+        }else{
+            throw new ParameterException();
+        }
+
+    }
+
+    /**
+     * Notes:下一个任务
+     * User: charl
+     * Date: 2020/5/18
+     * Time: 11:12
+     * @throws Exception
+     * @throws ParameterException
+     * @throws SuccessMessage
+     * @throws \app\lib\exception\TokenException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function next_mission()
     {
         $casid = input('casid');
@@ -86,6 +151,20 @@ class UserState
             throw new ParameterException();
         }
     }
+
+    /**
+     * Notes:下一个阶段
+     * User: charl
+     * Date: 2020/5/18
+     * Time: 11:12
+     * @return bool
+     * @throws Exception
+     * @throws ParameterException
+     * @throws \app\lib\exception\TokenException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     protected function next_stage()
     {
         $casid = input('casid');

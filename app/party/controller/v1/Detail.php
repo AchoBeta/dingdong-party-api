@@ -69,6 +69,20 @@ class Detail
             throw new ParameterException();
         }
     }
+
+    /**
+     * Notes:根据材料id进行材料修改版本上传
+     * User: charl
+     * Date: 2020/5/18
+     * Time: 11:11
+     * @param $id
+     * @return \think\response\Json
+     * @throws ParameterException
+     * @throws UploadException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function uploadDetailDoc($id)
     {
         $files = request()->file();
@@ -79,7 +93,7 @@ class Detail
         $tool = new UploadTool();
         $upload_res = $tool->file_upload($files);
         $model = UserDetail::find($id);
-        if($model->isEmpty())
+        if(!$model||$model->isEmpty())
         {
             throw new ParameterException();
         }
