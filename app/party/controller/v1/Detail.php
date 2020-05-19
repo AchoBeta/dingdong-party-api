@@ -33,7 +33,7 @@ class Detail
         $model = UserDetail::where(['task_id'=>$task_id,'user_id'=>$user_id])->find();
         if(!$model)
         {
-            throw new ParameterException();
+            throw new ParameterException(['msg'=>'用户尚未提交审核材料']);
         }
         return json($model);
     }
@@ -66,7 +66,7 @@ class Detail
         {
             throw new SuccessMessage();
         }else{
-            throw new ParameterException();
+            throw new ParameterException(['msg'=>'审核异常']);
         }
     }
 
