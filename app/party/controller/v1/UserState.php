@@ -86,7 +86,7 @@ class UserState
         }
         $stage_model = \app\common\model\Stage::where(['order'=>1,'general_branch_id'=>Token::getCurrentTokenVar('general_branch_id')])->find();
         $stage_id = $stage_model->id;
-        $task_model = \app\common\model\Task::where(['stage_id'=>$stage_id,'order'=>1]);
+        $task_model = \app\common\model\Task::where(['stage_id'=>$stage_id,'order'=>1])->find();
         $task_id = $task_model->id;
         $model->stage_id = $stage_id;
         $model->task_id = $task_id;
