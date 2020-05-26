@@ -22,6 +22,8 @@ Route::post(":version/user/Note/application",":version.Note/editApplicationNoteI
 Route::post(":version/user/Note/prepare",":version.Note/editPrepareNoteInfo");
 Route::post(":version/user/Note/supplyPrepare",":version.Note/supplyPrepareNoteInfo");
 
+Route::get(":version/user/Note/Info/:task",":version.Note/getNoteInfo");
+
 
 Route::get(':version/task/all', ':version.Task/getAllTasks');
 Route::get(':version/task/info/:id', ':version.Task/getTaskById');
@@ -31,6 +33,7 @@ Route::get(":version/task/selectByStage/:stageId",':version.Task/getTasksByStage
 Route::post(":version/file/test",":version.File/test");
 Route::post(":version/file/Note",":version.File/generateNote");
 Route::post(":version/file/Material/:taskId",":version.File/uploadMaterial");
+Route::get(":version/file/Material/:taskId",":version.File/materialStatus");
 
 Route::get(':version/contacts/train',':version.Contacts/getTrainAll');
 Route::get(':version/contacts/introduce',':version.Contacts/getIntroduceAll');
