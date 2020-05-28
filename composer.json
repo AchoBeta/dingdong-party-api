@@ -25,7 +25,8 @@
       "ext-curl": "*",
       "ext-json": "*",
         "jaeger/querylist": "^4.2",
-        "phpoffice/phpword": "^0.17.0"
+        "phpoffice/phpword": "^0.17.0",
+        "dompdf/dompdf": "^0.8.5"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

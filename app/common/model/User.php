@@ -23,11 +23,15 @@ class User extends Model
     }
     public function generalBranch()
     {
-        return $this->belongsTo(GeneralBranch::class,'general_branch_id');
+        return $this->belongsTo(GeneralBranch::class, 'general_branch_id');
+    }
+    public function userBranch()
+    {
+        return $this->hasOne(UserBranch::class,'id','id');
     }
     public function activities()
     {
-        return $this->hasMany(UserActivity::class,'user_id');
+        return $this->hasMany(UserActivity::class,'casid','id');
     }
     public function details()
     {

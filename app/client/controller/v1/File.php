@@ -2,6 +2,7 @@
 
 
 namespace app\client\controller\v1;
+use app\common\model\Upload;
 use app\common\model\UserDetail;
 use app\common\model\UserState;
 use app\common\model\Weixin;
@@ -9,6 +10,7 @@ use app\common\model\User as UserModel;
 use app\common\validate\TaskIDMustBePositiveInt;
 use app\lib\enum\MaterialStatusEnum;
 use app\lib\enum\TaskNeedMaterialEnum;
+use app\lib\exception\FileException;
 use app\lib\exception\TaskException;
 use GuzzleHttp\Client;
 use PhpOffice\PhpWord\PhpWord;
@@ -60,8 +62,8 @@ class File
         if($hasUpload){
             $casId = $userUploadMsg->casid;
             if($needCheck){
-                if($userUploadMsg->status >= MaterialStatusEnum::PASS_BY_AI){
-                    $msg = $userUploadMsg->status==MaterialStatusEnum::PASS_BY_AI?"你的材料正处于管理员审核阶段，请耐心等候":'你的材料已经通过审核了，请勿重复提交.';
+                if($userUploadMsg->status >= MaterialStatusEnum::NO_CHECKED){
+                    $msg = $userUploadMsg->status==MaterialStatusEnum::NO_CHECKED?"你的材料正处于管理员审核阶段，请耐心等候":'你的材料已经通过审核了，请勿重复提交.';
                     return ['code'=>200,'status'=>$userUploadMsg->status,'msg'=>$msg];
                 }
             }
@@ -73,7 +75,7 @@ class File
             }
         }else{
             $openId = Weixin::where('id',$uid)->find()->value('openId');
-            $casId = UserModel::where('openId',$openId)->find()->value('casId');
+            $casId = UserModel::where('openId',$openId)->value('casId');
             $userUploadMsg = [
                 'user_id' => $uid,
                 'casid' => $casId,
@@ -81,28 +83,59 @@ class File
             ];
         }
         $file = request()->file();
+        if(count($file)==0){
+            throw new FileException();
+        }
         try{
-            validate(['file'=>'filesize:3145728|fileExt:doc,docx'])
+            validate(['file'=>'filesize:3145728|fileExt:docx'])
                 ->check($file);
         }catch (ValidateException $e){
-            echo $e->getMessage();
+            throw new FileException(['msg'=>"文件验证不通过。"]);
         }
         $rule = function () use ($taskId){
             return TaskNeedMaterialEnum::TASK_NAME_ARR[$taskId];
         };
         $saveName = \think\facade\Filesystem::disk('public')->putFile( "stuWord/$casId", $file['file'],$rule);
+        $saveFile = [
+            'savepath' => $saveName,
+            'url' => $saveName,
+            'file_mime' => $file['file']->getOriginalMime(),
+            'file_name' => $file['file']->getOriginalName(),
+            'ext' => $file['file']->getOriginalExtension(),
+            'size' => round($file['file']->getSize()/1024/1024,2),
+            'ip'=>request()->ip()
+        ];
+        $upload = new Upload();
+        $res = $upload->save($saveFile);
+        $scorePass = false;
         if($needCheck){
             $path = "C:/inetpub/wwwroot/Party/public/storage/".$saveName;
             $content = $this->getFileStr($path);
             $result = $this->checkOriginal($content);
-            $res = $result>self::PASS_SCORE?true:false;
+            $scorePass = $result['result']['score']>self::PASS_SCORE?true:false;
+            $sentenceArr = [];
+            foreach ($result['result']['sentence'] as $sentence){
+                if($sentence['resemble_value']>0)
+                    array_push($sentenceArr,$sentence);
+            }
+            if($hasUpload){
+                $userUploadMsg->remarks = [
+                    "score" => $result['result']['score'],
+                    'res' => $sentenceArr
+                ];
+            }else{
+                $userUploadMsg['remarks'] = [
+                    "score" => $result['result']['score'],
+                    'res' => $sentenceArr,
+                ];
+            }
         }else{
             $res = true;
         }
-        $status = $needCheck?($res?MaterialStatusEnum::PASS_BY_AI:MaterialStatusEnum::NO_PASS_BY_AI):MaterialStatusEnum::NO_CHECKED;
-        $msg = $needCheck?($status==MaterialStatusEnum::PASS_BY_AI?"通过自动查重审核，等待管理员审核":"自动查重审核不通过，请检查文章的原创性"):"文件上传成功，等待管理员审核";
+        $status = $needCheck?($scorePass?MaterialStatusEnum::NO_CHECKED:MaterialStatusEnum::NO_PASS_BY_AI):MaterialStatusEnum::NO_CHECKED;
+        $msg = $needCheck?($scorePass==true?"通过自动查重审核，等待管理员审核":"自动查重审核不通过，请检查文章的原创性"):"文件上传成功，等待管理员审核";
         if($hasUpload){
-            $userUploadMsg->material_name = TaskNeedMaterialEnum::TASK_NAME_ARR[$taskId];;
+            $userUploadMsg->material_name = TaskNeedMaterialEnum::TASK_NAME_ARR[$taskId];
             $userUploadMsg->status = $status;
             $userUploadMsg->url = $saveName;
             $userUploadMsg->save();
@@ -113,13 +146,14 @@ class File
             $insertSuccess = UserDetail::insert($userUploadMsg);
             $msg = $insertSuccess?$msg:"上传失败，请重试";
         }
-        $sentence = $res?"":$result['result']['sentence'];
         $code = $res ? 200:300;
-        $finalRes = $needCheck?(['msg'=>$msg,'code'=>$code,'status'=>$status,'score'=>$result['result']['score'],'sentence'=>$sentence]):(['msg'=>$msg,'status'=>$status,'code'=>$code]);
+        $finalRes = $needCheck?(['msg'=>$msg,'code'=>$code,'status'=>$status,'score'=>$result['result']['score'],'sentence'=>$sentenceArr]):(['msg'=>$msg,'status'=>$status,'code'=>$code]);
         return $finalRes;
     }
 
     protected function getFileStr($path){
+        $arr = explode('.',$path);
+        $ext = array_pop($arr);
         $sources = IOFactory::load($path)->getSections();
         $str = '';
         foreach ($sources as $section) {
@@ -161,7 +195,9 @@ class File
         ];
         foreach ($arr as $key => $value)
             $templateProcessor->setValue($key, $value);
-        $templateProcessor->saveAs(time()."$casId.docx");
+        $fileName = time()."$casId.docx";
+        $templateProcessor->saveAs($fileName);
+        $templateProcessor->save();
     }
 
     protected function checkOriginal($content){
@@ -178,5 +214,25 @@ class File
         ]);
         $response = json_decode($request->getBody()->getContents(),true);
         return $response;
+    }
+
+    public function MaterialStatus($taskId){
+        (new TaskIDMustBePositiveInt())->goCheck();
+        $uid = TokenService::getCurrentUid();
+        $openId = TokenService::getCurrentTokenVar('openid');
+        $casId = UserModel::where('openId',$openId)->value("casid");
+        $userUploadMsg = UserDetail::where(['casid'=>$casId,'task_id'=>$taskId])->find();
+        if(!$userUploadMsg){
+            throw new TaskException(['msg'=>"你还没有上传这方面的材料呢。"]);
+        }
+        if($userUploadMsg->status == MaterialStatusEnum::NO_PASS_BY_ADMIN){
+            return json(['code'=>300,'status'=>$userUploadMsg->status,'msg'=>"管理员不通过你的审核,详情请看文件备注和不通过原因。",'reason'=>$userUploadMsg->reason,'audit_url'=>$userUploadMsg->audit_url,'remarks'=>$userUploadMsg->remarks]);
+        }
+        else if($userUploadMsg->status >= MaterialStatusEnum::NO_CHECKED&&$userUploadMsg->status != MaterialStatusEnum::NO_PASS_BY_ADMIN){
+            $msg = $userUploadMsg->status==MaterialStatusEnum::NO_CHECKED?"你的材料正处于管理员审核阶段，请耐心等候":'你的材料已经通过审核了';
+            return json(['code'=>200,'status'=>$userUploadMsg->status,'msg'=>$msg]);
+        }else if($userUploadMsg->status == MaterialStatusEnum::NO_PASS_BY_AI){
+            return json(['code'=>300,'status'=>$userUploadMsg->status,'msg'=>"文章查重不通过,详情请看文件备注和不通过原因",'reason'=>"文件不通过查重，请修改后重新上传。",'audit_url'=>$userUploadMsg->audit_url,'remarks'=>$userUploadMsg->remarks]);
+        }
     }
 }

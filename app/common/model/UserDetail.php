@@ -10,6 +10,8 @@ class UserDetail extends Model
 {
     protected $autoWriteTimestamp = true;
 
+    protected $json = ['remarks'];
+
     public function getUrlAttr($value){
         return "https://hua-bang.club/Party/public/storage/".$value;
     }
