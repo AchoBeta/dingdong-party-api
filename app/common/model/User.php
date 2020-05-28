@@ -21,6 +21,10 @@ class User extends Model
     {
         return $this->belongsTo(Branch::class,'branch_id');
     }
+    public function generalBranch()
+    {
+        return $this->belongsTo(GeneralBranch::class,'general_branch_id');
+    }
     public function activities()
     {
         return $this->hasMany(UserActivity::class,'user_id');

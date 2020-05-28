@@ -40,7 +40,11 @@ class Task
     public function read($id)
     {
         $res = TaskModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))
-            ->with(['user'])
+            ->with(['user'=>function($query){
+                $query->hidden(['pivot'])->with(['general_branch'=>function($query){
+                    $query->visible(['name','general_branch_secretary']);
+                }]);
+            }])
             ->withCount(['user_branch' => 'total'])
             ->find($id);
         return json($res);
