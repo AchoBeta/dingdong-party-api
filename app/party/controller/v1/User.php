@@ -19,7 +19,7 @@ class User
 
     public function read($id)
     {
-        $list = UserModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))->hidden(['openId'])
+        $list = UserModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))->with(['userBranch'])->hidden(['openId'])
             ->find($id);
         return json($list);
     }
