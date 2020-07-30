@@ -10,10 +10,10 @@ use app\lib\exception\UserException;
 
 class User
 {
-    public function index()
+    public function index($limit = 10)
     {
         $list = UserModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))->hidden([''])
-            ->select();
+            ->paginate($limit);
         return json($list);
     }
 
