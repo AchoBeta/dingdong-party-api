@@ -13,10 +13,10 @@ class UserDetail extends Model
     protected $json = ['remarks'];
 
     public function getUrlAttr($value){
-        return config('setting.storage_base_url').$value;
+        return config('secure.storage_base_url').$value;
     }
     public function getAuditUrlAttr($value){
-        return config('setting.storage_base_url').$value;
+        return config('secure.storage_base_url').$value;
     }
 
     public function user()
