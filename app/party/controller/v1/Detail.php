@@ -55,7 +55,7 @@ class Detail
     public function audit($id,$status = 1,$reason = '')
     {
         $model = UserDetail::find($id);
-        if($model->isEmpty())
+        if(!$model)
         {
             throw new ParameterException();
         }
