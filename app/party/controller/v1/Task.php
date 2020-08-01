@@ -40,10 +40,15 @@ class Task
     public function read($id)
     {
         $res = TaskModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))
-            ->with(['user'=>function($query){
-                $query->hidden(['pivot'])->with(['general_branch'=>function($query){
-                    $query->visible(['name','general_branch_secretary']);
-                }])->page(input('page')??1,input('limit')??10);
+            ->with(['user'=>function($query) use ($id){
+                $query->hidden(['pivot'])->with([
+                    'details'=>function($query) use ($id){
+                        $query->where(['task_id'=>$id])->visible(['status','material_name']);
+                    },
+                    'general_branch'=>function($query){
+                        $query->visible(['name','general_branch_secretary']);
+                    }
+                ])->page(input('page')??1,input('limit')??10);
             }])
             ->withCount(['user_branch' => 'total'])
             ->find($id);

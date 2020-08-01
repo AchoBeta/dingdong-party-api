@@ -25,8 +25,8 @@ class UploadTool
             foreach ($files['image'] as $k => $file) {
                 $absolute = \think\facade\Filesystem::disk('image')->putFile( '', $file);
                 $savename[$k] = [
-                    'savepath' => $absolute,
-                    'url' => $absolute,
+                    'savepath' => str_replace('\\','/',$absolute),
+                    'url' => str_replace('\\','/',$absolute),
                     'file_mime' => $file->getOriginalMime(),
                     'file_name' => $file->getOriginalName(),
                     'ext' => $file->getOriginalExtension(),
@@ -52,10 +52,10 @@ class UploadTool
 //            }
             $savename = [];
             foreach ($files['file'] as $k => $file) {
-                $absolute = \think\facade\Filesystem::disk('file')->putFile( '', $file);
+                $absolute = \think\facade\Filesystem::disk('public')->putFile( '', $file);
                 $savename[$k] = [
-                    'savepath' => $absolute,
-                    'url' => $absolute,
+                    'savepath' => str_replace('\\','/',$absolute),
+                    'url' => str_replace('\\','/',$absolute),
                     'file_mime' => $file->getOriginalMime(),
                     'file_name' => $file->getOriginalName(),
                     'ext' => $file->getOriginalExtension(),
