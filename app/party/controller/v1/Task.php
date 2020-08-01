@@ -43,7 +43,7 @@ class Task
             ->with(['user'=>function($query){
                 $query->hidden(['pivot'])->with(['general_branch'=>function($query){
                     $query->visible(['name','general_branch_secretary']);
-                }])->paginate(input('limit'));
+                }])->page(input('page')??1,input('limit')??10);
             }])
             ->withCount(['user_branch' => 'total'])
             ->find($id);
