@@ -6,6 +6,7 @@ namespace app\party\controller\v1;
 use app\common\model\Stage as StageModel;
 use app\common\service\Token;
 use app\lib\exception\StageException;
+use app\lib\exception\SuccessMessage;
 
 
 class Stage
@@ -54,7 +55,7 @@ class Stage
         $res = StageModel::create(input());
         if($res)
         {
-            return $res;
+            return json($res);
         }else{
             throw new StageException(['msg'=>'阶段创建错误','errorCode'=>30001]);
         }
@@ -72,7 +73,7 @@ class Stage
         $res = $stage->save(input());
         if($res)
         {
-            return $res;
+            throw new SuccessMessage();
         }else{
             throw new StageException(['msg'=>'阶段更新错误','errorCode'=>30002]);
         }
@@ -89,7 +90,7 @@ class Stage
         $res = $stage->together(['task'])->delete();
         if($res)
         {
-            return $res;
+            throw new SuccessMessage();
         }else{
             throw new StageException(['msg'=>'阶段删除错误','errorCode'=>30003]);
         }

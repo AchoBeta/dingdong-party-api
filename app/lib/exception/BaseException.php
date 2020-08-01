@@ -8,6 +8,7 @@ class BaseException extends Exception
     public $code = 500;
     public $msg = '基础错误';
     public $errorCode = 10000;
+    public $data = [];
     public function __construct($params = [])
     {
         if(!is_array($params))
@@ -26,6 +27,9 @@ class BaseException extends Exception
         {
             $this->errorCode = $params['errorCode'];
         }
-
+        if(array_key_exists('data',$params))
+        {
+            $this->errorCode = $params['data'];
+        }
     }
 }

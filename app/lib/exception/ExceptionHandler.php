@@ -21,6 +21,10 @@ class ExceptionHandler extends Handle
      * @var string
      */
     private $errorCode;
+    /**
+     * @var array
+     */
+    private $data;
 
     public function render($request, Throwable $e): Response
     {
@@ -58,6 +62,7 @@ class ExceptionHandler extends Handle
             'error_code'=>$this->errorCode,
             'request_url'=>$request->url()
         ];
+        $result['data'] = $e->data??[];
         return json($result,$this->code);
     }
     private function recordErrorLog(Exception $e)

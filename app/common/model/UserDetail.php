@@ -13,7 +13,10 @@ class UserDetail extends Model
     protected $json = ['remarks'];
 
     public function getUrlAttr($value){
-        return "https://hua-bang.club/Party/public/storage/".$value;
+        return config('setting.storage_base_url').$value;
+    }
+    public function getAuditUrlAttr($value){
+        return config('setting.storage_base_url').$value;
     }
 
     public function user()
