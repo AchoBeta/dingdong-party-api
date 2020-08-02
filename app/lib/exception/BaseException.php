@@ -29,7 +29,7 @@ class BaseException extends Exception
         }
         if(array_key_exists('data',$params))
         {
-            $this->errorCode = $params['data'];
+            $this->data = $params['data'];
         }
     }
 }
