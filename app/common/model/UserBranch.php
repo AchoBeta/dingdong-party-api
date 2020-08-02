@@ -18,4 +18,11 @@ class UserBranch extends Model
     public function secondContact(){
         return $this->belongsTo(Contacts::class,'develop_contact_second');
     }
+
+    public function firstRecommendContact(){
+        return $this->hasMany(Contacts::class,'id',"recommend_first");
+    }
+    public function secondRecommendContact(){
+        return $this->hasMany(Contacts::class,'id',"recommend_first");
+    }
 }

@@ -89,4 +89,45 @@ class User
     public function getMaterialUrl($taskId){
 
     }
+
+    public function checkUserBind(){
+        $uid = TokenService::getCurrentUid();
+        $openId = TokenService::getCurrentTokenVar("openid");
+        $casId = UserModel::where("openId",$openId)->value("casid");
+        $hasBind = $casId?true:false;
+        $code = $casId?"200":"401";
+        return json(['casId'=>$casId,"result"=>$hasBind,'code'=>$code]);
+    }
+
+    public function getUserDevelopContacts(){
+        $uid = TokenService::getCurrentUid();
+        $openId = TokenService::getCurrentTokenVar("openid");
+        $casId = UserModel::where("openId",$openId)->value("casid");
+        $userBranch = UserBranch::where('id',$casId)->with(['firstContact','secondContact'])->find();
+        return json(['firstDevelopContact'=>$userBranch['firstContact'],'secondDevelopContact'=>$userBranch['secondContact']]);
+    }
+
+    public function getUserRecommendContacts(){
+        $uid = TokenService::getCurrentUid();
+        $openId = TokenService::getCurrentTokenVar("openid");
+        $casId = UserModel::where("openId",$openId)->value("casid");
+        $userBranch = UserBranch::where('id',$casId)->with(['firstRecommendContact','secondRecommendContact'])->find();
+        return json(['firstRecommendContact'=>$userBranch['firstRecommendContact'],'secondRecommendContact'=>$userBranch['secondRecommendContact']]);
+    }
+
+
+    public function getUserInfo(){
+        $openId = TokenService::getCurrentTokenVar('openid');
+        $user = UserModel::where('openId',$openId)->field(['casid,name,class'])->find();
+        $user['branch_name'] = "网络空间安全学院党支部";
+        return json($user);
+    }
+
+    public function cancelBind(){
+        $openId = TokenService::getCurrentTokenVar('openid');
+        $res = UserModel::where('openId',$openId)->update(['openId'=>null]);
+        $code = $res?200:500;
+        $msg = $res?"解绑成功":"解绑失败";
+        return json(['code'=>$code,'msg'=>$msg]);
+    }
 }
