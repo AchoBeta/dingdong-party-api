@@ -14,10 +14,10 @@ class UserActivity extends Model
         return $this->belongsTo(User::class,'user_id');
     }
 
-    public static function addUserActivity($activities,$casId,$taskId){
+    public static function addUserActivity($activities,$casId,$taskId,$uid){
         foreach ($activities as &$activity){
             $activity['casid'] = $casId;
-            $activity['user_id'] = 4;
+            $activity['user_id'] = $uid;
             $activity['task_id'] = $taskId;
         }
         $res = (new UserActivity())->saveAll($activities);

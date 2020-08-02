@@ -47,17 +47,17 @@ class File
         }
         $casId = UserModel::where('openId',$openId)->value("casid");
         $taskIdFromSql = UserState::where('casid',$casId)->value("task_id");
-        if($taskIdFromSql!=$taskId){
-            throw new TaskException(['msg'=>'任务不属于用户当前阶段']);
-        }
+//        if($taskIdFromSql!=$taskId){
+//            throw new TaskException(['msg'=>'任务不属于用户当前阶段']);
+//        }
         $needCheck = in_array($taskId,TaskNeedMaterialEnum::TASK_NEED_CHECK);
-        $res = $this->upload($taskId,$needCheck);
+        $res = $this->upload($taskId,$casId,$needCheck);
         return json($res);
     }
 
-    protected function upload($taskId,$needCheck=false){
+    protected function upload($taskId,$casId,$needCheck=false){
         $uid = TokenService::getCurrentUid();
-        $userUploadMsg = UserDetail::where(['user_id'=>$uid,"task_id"=>$taskId])->find();
+        $userUploadMsg = UserDetail::where(['user_id'=>$casId,"task_id"=>$taskId])->find();
         $hasUpload = $userUploadMsg?true:false;
         if($hasUpload){
             $casId = $userUploadMsg->casid;
@@ -74,10 +74,10 @@ class File
                 }
             }
         }else{
-            $openId = Weixin::where('id',$uid)->find()->value('openId');
+            $openId = Weixin::where('id',$uid)->value('openId');
             $casId = UserModel::where('openId',$openId)->value('casId');
             $userUploadMsg = [
-                'user_id' => $uid,
+                'user_id' => $casId,
                 'casid' => $casId,
                 'task_id' => $taskId
             ];
@@ -143,6 +143,7 @@ class File
             $userUploadMsg['material_name'] = TaskNeedMaterialEnum::TASK_NAME_ARR[$taskId];;
             $userUploadMsg['status'] = $status;
             $userUploadMsg['url'] = $saveName;
+            unset($userUploadMsg['casid']);
             $insertSuccess = UserDetail::insert($userUploadMsg);
             $msg = $insertSuccess?$msg:"上传失败，请重试";
         }
@@ -221,7 +222,7 @@ class File
         $uid = TokenService::getCurrentUid();
         $openId = TokenService::getCurrentTokenVar('openid');
         $casId = UserModel::where('openId',$openId)->value("casid");
-        $userUploadMsg = UserDetail::where(['casid'=>$casId,'task_id'=>$taskId])->find();
+        $userUploadMsg = UserDetail::where(['user_id'=>$casId,'task_id'=>$taskId])->find();
         if(!$userUploadMsg){
             throw new TaskException(['msg'=>"你还没有上传这方面的材料呢。"]);
         }

@@ -14,6 +14,10 @@ Route::get(':version/user/test', ':version.Stage/test');
 Route::post(":version/user/identity",":version.User/identityForWeChat");
 Route::post(":version/user/add",":version.User/addUser");
 Route::post(":version/user/bindCasId",":version.User/bindCasId");
+Route::get(":version/user/cancelBind",":version.User/cancelBind");
+
+Route::get(':version/user/develop/contacts', ':version.User/getUserDevelopContacts');
+Route::get(':version/user/recommend/contacts', ':version.User/getUserRecommendContacts');
 
 Route::post(":version/user/Note/apply",":version.Note/editApplyNoteInfo");
 Route::post(":version/user/Note/activist",":version.Note/editActivistNoteInfo");
@@ -22,7 +26,17 @@ Route::post(":version/user/Note/application",":version.Note/editApplicationNoteI
 Route::post(":version/user/Note/prepare",":version.Note/editPrepareNoteInfo");
 Route::post(":version/user/Note/supplyPrepare",":version.Note/supplyPrepareNoteInfo");
 
+Route::get(":version/user/bind/check",":version.User/checkUserBind");
+
 Route::get(":version/user/Note/Info/:task",":version.Note/getNoteInfo");
+Route::get(":version/user/Note/allInfo",":version.Note/getAllNoteInfo");
+Route::get(":version/user/Note/fileLink/:fileStage",":version.Note/generateNote");
+
+Route::get(":version/user/score/first",":version.Note/getUserFirstScore");
+Route::get(":version/user/score/second",":version.Note/getUserSecondScore");
+Route::get(":version/user/File/all",":version.Note/getAllFilesLink");
+Route::get(":version/user/person/info",":version.User/getUserInfo");
+
 
 
 Route::get(':version/task/all', ':version.Task/getAllTasks');

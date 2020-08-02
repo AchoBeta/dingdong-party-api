@@ -5,6 +5,7 @@ namespace app\party\controller\v1;
 
 use app\common\model\User as UserModel;
 use app\common\service\Token;
+use app\lib\exception\ResultException;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\UserException;
 
@@ -64,6 +65,34 @@ class User
             throw new SuccessMessage();
         }else{
             throw new UserException(['msg'=>'用户信息删除异常','errorCode'=>70001]);
+        }
+    }
+
+    /**
+     * Notes:审核用户基本信息
+     * User: charl
+     * Date: 2020/8/2
+     * Time: 9:30
+     * @param $id
+     * @param $status
+     * @param string $reason
+     * @throws ResultException
+     * @throws SuccessMessage
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function changeAuditStatus($id,$status,$reason = '')
+    {
+        $user = UserModel::find($id);
+        $user->status = $status;
+        $user->reason = $reason;
+        $res = $user->save();
+        if($res)
+        {
+            throw new SuccessMessage();
+        }else{
+            throw new ResultException(['msg'=>'无法修改该用户审核状态']);
         }
     }
 
