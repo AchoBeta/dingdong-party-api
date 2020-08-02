@@ -20,7 +20,9 @@ class Stage
     public function index()
     {
         $res = StageModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))
-            ->with(['task'])
+            ->with(['task'=>function($query){
+                $query->order('order','asc');
+            }])
             ->select();
         return json($res);
     }

@@ -11,6 +11,7 @@ Route::get(':version/user/:id', ':version.User/read');
 Route::post(':version/user', ':version.User/save');
 Route::put(':version/user/:id', ':version.User/update');
 Route::delete(':version/user/:id', ':version.User/delete');
+Route::put(':version/auditUser/:id', ':version.User/changeAuditStatus');
 
 //阶段相关路由
 Route::get(':version/stage', ':version.Stage/index');
