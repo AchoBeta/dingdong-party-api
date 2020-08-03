@@ -41,7 +41,8 @@ class Task
     {
         $res = TaskModel::where('general_branch_id',Token::getCurrentTokenVar('general_branch_id'))
             ->with(['userBranch','user'=>function($query) use ($id){
-                $query->hidden(['pivot'])->with([
+//                $query->hidden(['pivot'])->with([
+                $query->with([
                     'details'=>function($query) use ($id){
                         $query->where(['task_id'=>$id])->visible(['status','material_name']);
                     },
