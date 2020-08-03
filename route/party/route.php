@@ -28,6 +28,7 @@ Route::delete(':version/stage/:id', ':version.Stage/delete');
 Route::put(':version/state',':version.UserState/update');
 Route::put(':version/state/next_mission',':version.UserState/next_mission');
 Route::put(':version/state/resetState',':version.UserState/resetState');
+Route::post(':version/state/audit',':version.UserState/audit');
 
 //任务相关路由
 Route::get(':version/task', ':version.Task/index');

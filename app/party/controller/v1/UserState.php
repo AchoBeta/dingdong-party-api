@@ -142,7 +142,9 @@ class UserState
         }
         $res = $model->save([
             'stage_id'=>$re['stage_id'],
-            'task_id'=>$re['id']
+            'task_id'=>$re['id'],
+            'status'=>0,
+            'reason'=>null
         ]);
         if($res)
         {
@@ -189,13 +191,45 @@ class UserState
         }
         $res = $model->save([
             'stage_id' => $target_stage_id,
-            'task_id' => $target_task_id
+            'task_id' => $target_task_id,
+            'status'=>0,
+            'reason'=>null
         ]);
         if($res)
         {
             return true;
         }else{
             return false;
+        }
+    }
+
+    /**
+     * Notes:更改当前阶段任务审核状态
+     * User: charl
+     * Date: 2020/8/3
+     * Time: 15:32
+     * @param $casid
+     * @param $status
+     * @throws Exception
+     * @throws SuccessMessage
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function audit($casid, $status)
+    {
+        $userState = UserStateModel::where(['casid'=>$casid])->find();
+        if(input('?reason')&&input('reason'))
+        {
+            $userState->reason = input('reason');
+        }
+        $userState->status = $status;
+        $res = $userState->save();
+        if($res)
+        {
+            throw new SuccessMessage();
+        }else{
+            throw new Exception('数据保存失败');
         }
     }
 }
