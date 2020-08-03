@@ -6,6 +6,7 @@ namespace app\party\controller\v1;
 
 use app\common\model\UserBranch;
 use app\lib\exception\AdminException;
+use app\lib\exception\ContactsException;
 use app\lib\exception\ParameterException;
 use app\lib\exception\SuccessData;
 use app\lib\exception\SuccessMessage;
@@ -53,7 +54,7 @@ class Contacts
         }
         if($develop_contact_first_id == 0&&$develop_contact_second_id == 0)
         {
-            throw new ParameterException();
+            throw new ContactsException(['errorCode'=>50002,'msg'=>'尚未选择培养联系人']);
         }
         if($develop_contact_first_id!=0)
         {
