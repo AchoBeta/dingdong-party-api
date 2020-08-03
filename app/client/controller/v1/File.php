@@ -60,7 +60,7 @@ class File
         $userUploadMsg = UserDetail::where(['user_id'=>$casId,"task_id"=>$taskId])->find();
         $hasUpload = $userUploadMsg?true:false;
         if($hasUpload){
-            $casId = $userUploadMsg->casid;
+            $casId = $userUploadMsg->user_id;
             if($needCheck){
                 if($userUploadMsg->status >= MaterialStatusEnum::NO_CHECKED){
                     $msg = $userUploadMsg->status==MaterialStatusEnum::NO_CHECKED?"你的材料正处于管理员审核阶段，请耐心等候":'你的材料已经通过审核了，请勿重复提交.';
@@ -109,7 +109,7 @@ class File
         $res = $upload->save($saveFile);
         $scorePass = false;
         if($needCheck){
-            $path = "C:/inetpub/wwwroot/Party/public/storage/".$saveName;
+            $path = "C:/xampp/virtualhost/Party/public/storage/".$saveName;
             $content = $this->getFileStr($path);
             $result = $this->checkOriginal($content);
             $scorePass = $result['result']['score']>self::PASS_SCORE?true:false;
