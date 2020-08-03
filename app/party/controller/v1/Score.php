@@ -5,6 +5,7 @@ namespace app\party\controller\v1;
 
 
 use app\common\model\UserScore;
+use app\lib\exception\ScoreException;
 use app\lib\exception\SuccessMessage;
 use think\Exception;
 
@@ -31,6 +32,10 @@ class Score
         if(!$userScore)
         {
             $userScore = UserScore::create(['casid'=>$casid]);
+        }
+        if($branch_school_score == -1&&$school_score == -1)
+        {
+            throw new ScoreException(['errorCode'=>60002,'msg'=>'尚未录入成绩']);
         }
         if($branch_school_score != -1)
         {
