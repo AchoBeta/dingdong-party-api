@@ -17,6 +17,7 @@ use PhpOffice\PhpWord\TemplateProcessor;
 
 class Note
 {
+    const LOCAL_STATIC_URL = "C:/xampp/virtualhost/Party/public/";
     const URL_ATTR = "https://hua-bang.club/Party/public/storage/";
     const FILE_FILED_ARR = [
         'apply' => ['name','mobile','institute','gender','nation','origin','birth','casId','join_league_time','id_card','grade','dormitory_area','dormitory_no','class_position','class','email','family_address','resume'],
@@ -27,7 +28,7 @@ class Note
         "supplyPrepare"=>['name','mobile','institute','gender','nation','origin','birth','casId','join_league_time','id_card','grade','dormitory_area','dormitory_no','class_position','class','email','family_address','resume'],
     ];
 
-    const SAVE_PATH = "https://hua-bang.club/Party/public/";
+    const SAVE_PATH = "https://www.dingdongtongxue.com/party/public/";
     const FILED_ARR_NAME = [
         'apply' => '入党申请人培养考察手册',
         'activist' =>'入党积极分子培养考察手册',
@@ -257,7 +258,7 @@ class Note
             'userBranch',
             'activities'
         ])->find();
-        $templateProcessor = new TemplateProcessor("temple/templeFinal.docx");
+        $templateProcessor = new TemplateProcessor(self::LOCAL_STATIC_URL."temple/templeFinal.docx");
         $filedArr = self::FILE_FILED_ARR[$fileStage];
         $arr = [];
         foreach ($filedArr as $key => $value){
@@ -269,9 +270,9 @@ class Note
         $arr['gender'] = $user['gender'] ==1?"男":"女";
         foreach ($arr as $key => $value)
             $templateProcessor->setValue($key, $value);
-        $fileName = "storage/stuWord/$casId/".self::FILED_ARR_NAME[$fileStage].".docx";
+        $fileName = self::LOCAL_STATIC_URL."storage/stuWord/$casId/".self::FILED_ARR_NAME[$fileStage].".docx";
         $templateProcessor->saveAs($fileName);
-        $url = self::SAVE_PATH.$fileName;
+        $url = self::SAVE_PATH."storage/stuWord/$casId/".self::FILED_ARR_NAME[$fileStage].".docx";
         if(!$flag)
             return json(['code'=>200,'url'=>$url]);
         else
@@ -308,6 +309,5 @@ class Note
             ]
         ];
         return json($arr);
-
     }
 }

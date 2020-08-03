@@ -118,8 +118,8 @@ class User
 
     public function getUserInfo(){
         $openId = TokenService::getCurrentTokenVar('openid');
-        $user = UserModel::where('openId',$openId)->field(['casid,name,class'])->find();
-        $user['branch_name'] = "网络空间安全学院党支部";
+        $user = UserModel::where('openId',$openId)->with(['branch'])->visible(['casid','name','class','branch'=>['name']])->find()->toArray();
+        $user['branch_name'] = $user['branch']['name'];
         return json($user);
     }
 
