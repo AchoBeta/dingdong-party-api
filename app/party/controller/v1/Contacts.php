@@ -73,5 +73,47 @@ class Contacts
         }
     }
 
-
+    /**
+     * Notes:指定入党推荐人
+     * User: charl
+     * Date: 2020/8/3
+     * Time: 16:41
+     * @param $casid
+     * @param int $recommend_first_id
+     * @param int $recommend_second_id
+     * @throws AdminException
+     * @throws ContactsException
+     * @throws Exception
+     * @throws SuccessMessage
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function assignRecommands($casid, $recommend_first_id = 0, $recommend_second_id = 0)
+    {
+        $userBranch = UserBranch::find($casid);
+        if(!$userBranch)
+        {
+            throw new AdminException(['msg'=>'所操作的用户不存在']);
+        }
+        if($recommend_first_id == 0&&$recommend_second_id == 0)
+        {
+            throw new ContactsException(['errorCode'=>50003,'msg'=>'尚未选择入党介绍人']);
+        }
+        if($recommend_first_id!=0)
+        {
+            $userBranch->recommend_first_id = $recommend_first_id;
+        }
+        if($recommend_second_id!=0)
+        {
+            $userBranch->recommend_second_id = $recommend_second_id;
+        }
+        $res = $userBranch->save();
+        if($res)
+        {
+            throw new SuccessMessage();
+        }else{
+            throw new Exception('指派入党推荐人数据库存储异常');
+        }
+    }
 }
