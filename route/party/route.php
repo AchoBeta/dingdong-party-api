@@ -43,3 +43,5 @@ Route::get(':version/taskDetail', ':version.Detail/taskDetail');
 Route::post(':version/taskAudit', ':version.Detail/audit');
 Route::post(':version/uploadDetailDoc', ':version.Detail/uploadDetailDoc');
 
+//成绩相关
+Route::post(':version/score/record', ':version.Score/exam_score');
