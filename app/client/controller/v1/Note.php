@@ -18,7 +18,7 @@ use PhpOffice\PhpWord\TemplateProcessor;
 class Note
 {
     const LOCAL_STATIC_URL = "C:/xampp/virtualhost/Party/public/";
-    const URL_ATTR = "https://hua-bang.club/Party/public/storage/";
+    const URL_ATTR = "https://www.dingdongtongxue.com/party/public/storage/";
     const FILE_FILED_ARR = [
         'apply' => ['name','mobile','institute','gender','nation','origin','birth','casId','join_league_time','id_card','grade','dormitory_area','dormitory_no','class_position','class','email','family_address','resume'],
         'activist' =>['name','mobile','institute','gender','nation','origin','birth','casId','join_league_time','id_card','grade','dormitory_area','dormitory_no','class_position','class','email','family_address','resume'],
@@ -48,7 +48,7 @@ class Note
         ],
         "11" => [
             ["name","mobile","institute","gender","birth"],
-            ["id","branch_id","apply_time","activist_time","develop_contact_first","develop_contact_second","awards_info","disposition_info","investigation_in_half_year_activist"]
+            ["id","branch_id","apply_time","activist_time","develop_contact_first_id","develop_contact_second_id","awards_info","disposition_info","investigation_in_half_year_activist"]
         ],
         "25" => [
             ["name","mobile","institute"],
@@ -214,7 +214,7 @@ class Note
             ])->visible(self::FILED_ARR["$task"][0])->find();
             $branch_id = $user['userBranch']['branch_id'];
             $user['userBranch']['branch_name'] = GeneralBranch::where('id',$branch_id)->value('name');
-            $user['userBranch']['second_branch'] = "网络空间安全学院党总支";
+            $user['userBranch']['second_branch'] = $user['userBranch']['branch_name'];
         if(!$user){
             throw new UserException(["用户信息未录入。"]);
         }
@@ -229,7 +229,7 @@ class Note
         ])->find();
         $branch_id = $user['userBranch']['branch_id'];
         $user['userBranch']['branch_name'] = GeneralBranch::where('id',$branch_id)->value('name');
-        $user['userBranch']['second_branch'] = "网络空间安全学院党总支";
+        $user['userBranch']['second_branch'] = $user['userBranch']['branch_name'];
         if(!$user){
             throw new UserException(["用户信息未录入。"]);
         }
@@ -255,6 +255,7 @@ class Note
     public function generateNote($fileStage,$flag = false){
         $openId = TokenService::getCurrentTokenVar('openid');
         $user = UserModel::where('openId',$openId)->with([
+            'branch',
             'userBranch',
             'activities'
         ])->find();
@@ -264,7 +265,7 @@ class Note
         foreach ($filedArr as $key => $value){
             $arr[$value] = $user[$value];
         }
-        $arr['general_branch_name'] = "网络空间安全学院党总支";
+        $arr['general_branch_name'] = $user['branch']['name'];
         $arr['casId'] = $user['id'];
         $casId = $user['id'];
         $arr['gender'] = $user['gender'] ==1?"男":"女";
@@ -282,10 +283,14 @@ class Note
     public function getAllFilesLink(){
         $openId = TokenService::getCurrentTokenVar('openid');
         $casId = UserModel::where('openId',$openId)->value("casid");
+        $applyUrl = UserDetail::where(['user_id'=>$casId,'task_id'=>1])->value('url');
+        $becomeFullUrl = UserDetail::where(['user_id'=>$casId,'task_id'=>40])->value('url');
+        $think_reportUrl = UserDetail::where(['user_id'=>$casId,'task_id'=>21])->value('url');
+        $memoirUrl = UserDetail::where(['user_id'=>$casId,'task_id'=>22])->value('url');
         $arr = [
             'apply' => [
                 'name' => '入党申请书',
-                'link' => self::URL_ATTR.UserDetail::where(['user_id'=>$casId,'task_id'=>1])->value('url')
+                'link' => $applyUrl?self::URL_ATTR.$applyUrl:null
             ],
             'prepare' => [
                 'name' => '预备党员培养考察手册',
@@ -297,15 +302,15 @@ class Note
             ],
             'becomeFull' => [
                 'name' => '转正申请书',
-                'link' => self::URL_ATTR.UserDetail::where(['user_id'=>$casId,'task_id'=>40])->value('url'),
+                'link' => $becomeFullUrl?self::URL_ATTR.$becomeFullUrl:null
             ],
             'think_report' => [
                 'name' => '思想汇报',
-                'link' =>  self::URL_ATTR.UserDetail::where(['user_id'=>$casId,'task_id'=>21])->value('url'),
+                'link' =>  $think_reportUrl?self::URL_ATTR.$think_reportUrl:null
             ],
             'memoir' => [
                 'name' => '自传',
-                'link' => self::URL_ATTR.UserDetail::where(['user_id'=>$casId,'task_id'=>22])->value('url'),
+                'link' => $memoirUrl?self::URL_ATTR.$memoirUrl:null
             ]
         ];
         return json($arr);
