@@ -39,7 +39,7 @@ class User extends Model
     }
     public function score()
     {
-        return $this->hasOne(UserScore::class,'user_id');
+        return $this->hasOne(UserScore::class,'casid');
     }
     public static function add($userData){
         $openId = $userData['openId'];
