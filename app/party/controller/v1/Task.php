@@ -48,7 +48,8 @@ class Task
                     },
                     'general_branch'=>function($query){
                         $query->visible(['name','general_branch_secretary']);
-                    }
+                    },
+                    'score'
                 ])->page(input('page')??1,input('limit')??10);
             }])
             ->withCount(['user_branch' => 'total'])
