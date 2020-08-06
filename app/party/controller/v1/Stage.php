@@ -39,7 +39,7 @@ class Stage
             ->with(['user'=>function($query){
                 $query->hidden(['pivot'])->with(['general_branch'=>function($query){
                     $query->visible(['name','general_branch_secretary']);
-                }]);
+                }])->page(input('page')??1,input('limit')??10);
             }])
             ->withCount(['user_state' => 'total'])
             ->find($id);
