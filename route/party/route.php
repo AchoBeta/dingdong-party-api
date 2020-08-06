@@ -47,4 +47,4 @@ Route::post(':version/uploadDetailDoc', ':version.Detail/uploadDetailDoc');
 Route::post(':version/score/record', ':version.Score/exam_score');
 
 //阶段人数
-Route::get(':version/console/count','version.Console/index');
+Route::get(':version/console/count',':version.Console/index');
