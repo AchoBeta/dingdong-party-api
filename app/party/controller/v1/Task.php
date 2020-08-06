@@ -53,7 +53,7 @@ class Task
                     'score'
                 ])->page(input('page')??1,input('limit')??10);
             }])
-            ->withCount(['user_branch' => 'total'])
+            ->withCount(['user_state' => 'total'])
             ->find($id);
         return json($res);
     }
