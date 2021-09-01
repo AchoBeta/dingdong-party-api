@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dingdong.party.user.mapper.PartyStageMapper">
+
+    <resultMap id="StageCountEntity" type="com.dingdong.party.user.entity.vo.StageCountEntity"></resultMap>
+
+    <select id="queryStageCount" resultMap="StageCountEntity">
+        SELECT party_stage.id, party_stage.name, party_stage.description, COUNT(*) AS total
+        FROM party_stage, party_user
+        WHERE party_stage.id = party_user.stage_id
+        AND party_user.stage_id IN (SELECT id FROM party_stage)
+        GROUP BY party_stage.id
+    </select>
+
+</mapper>

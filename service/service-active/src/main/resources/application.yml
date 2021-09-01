@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: pro
+
+  application:
+    name: service-activity
+  jackson:
+    date-format: yyyy-MM-dd
+    time-zone: GMT+8
+  main:
+    allow-bean-definition-overriding: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:18001/eureka,http://localhost:18002/eureka
+  instance:
+    instance-id: service-active
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mybatis/mapper/*.xml

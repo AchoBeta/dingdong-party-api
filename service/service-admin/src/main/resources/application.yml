@@ -1,0 +1,38 @@
+spring:
+  profiles:
+    active: pro
+
+  application:
+    name: service-admin
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  main:
+    allow-bean-definition-overriding: true
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:18001/eureka,http://localhost:18002/eureka
+  instance:
+    instance-id: service-admin
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mybatis/mapper/*.xml
+
+wx:
+  open:
+    # 微信开放平台 appid
+    app_id: wxb5922ce236fc32c4
+    # 微信开放平台 appsecret
+    app_secret: f99b9fb8fe486580b9a813179a10a0a6
+    # 公众号 openid
+    open_id: wx17c0761b89cf01e9
+
+application:
+  login-url: /login
+  image-code-url: /image-code
+  logout-url: /logout

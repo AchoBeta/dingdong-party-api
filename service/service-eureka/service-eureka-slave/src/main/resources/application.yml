@@ -1,0 +1,27 @@
+server:
+  port: 18002
+
+spring:
+  profiles:
+    active: pro
+  application:
+    name: service-eureka-slave
+
+# Eureka 配置
+# Eureka 服务端的实例名称
+eureka:
+  instance:
+    hostname: eureka-slave
+    instance-id: service-eureka-slave
+  client:
+    # 表示是否向 Eureka 注册中心注册自己
+    register-with-eureka: true
+  # 如果为 false，则表示自己为注册中心
+    fetch-registry: false
+  # 监控页面地址
+    service-url:
+      defaultZone: http://localhost:18001/eureka
+
+logging:
+  level:
+    com.netflix: warn

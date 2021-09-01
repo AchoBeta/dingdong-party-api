@@ -1,0 +1,52 @@
+server:
+  port: 81
+
+spring:
+  application:
+    name: service-zuul
+  main:
+    allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
+
+  profiles:
+    active: pro
+
+  redis:
+    host: 106.52.192.138
+    port: 6379
+    database: 0
+    password: achobeta
+    timeout: 1800000
+
+management:
+  health:
+    redis:
+      enabled: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:18001/eureka,http://localhost:18002/eureka
+  instance:
+    instance-id: zuul81.com
+    prefer-ip-address: true
+
+zuul:
+  routes:
+    api1:
+      serviceId: service-user
+      path: /base/**
+    api2:
+      serviceId: service-activity
+      path: /organization/**
+    api3:
+      serviceId: service-admin
+      path: /backstage/**
+      sensitive-headers:
+
+  max:
+    host:
+      connections: 500
+  host:
+    socket-timeout-millis: 30000
+    connect-timeout-millis: 30000
+#  add-host-header: true
