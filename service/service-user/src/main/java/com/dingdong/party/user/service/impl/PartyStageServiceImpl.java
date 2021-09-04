@@ -60,13 +60,13 @@ public class PartyStageServiceImpl extends ServiceImpl<PartyStageMapper, PartySt
     }
 
     @Override
-    public Boolean updatePeriodsNum() {
-        return stageMapper.updateNum("12462534234");
+    public Boolean updatePeriodsNum(String id) {
+        return stageMapper.updateNum(id);
     }
 
     @Override
-    public Boolean updateGradeNum() {
-        return stageMapper.updateNum("14192307563");
+    public Boolean updateGradeNum(String id) {
+        return stageMapper.updateNum(id);
     }
 
     // 获取数据
