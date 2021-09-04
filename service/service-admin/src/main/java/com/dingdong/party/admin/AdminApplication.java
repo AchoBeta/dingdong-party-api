@@ -9,7 +9,6 @@ import org.springframework.context.annotation.ComponentScan;
 @MapperScan(basePackages = {"com.dingdong.party.admin.mapper"})
 @ComponentScan(basePackages = {"com.dingdong.party"})
 public class AdminApplication {
-
     public static void main(String[] args) {
         try {
             SpringApplication.run(AdminApplication.class, args);

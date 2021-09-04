@@ -15,5 +15,9 @@ import java.util.List;
  */
 public interface PartyFacultyService extends IService<PartyFaculty> {
 
-    public List<PartyFaculty> query(String pid);
+    List<PartyFaculty> query(String pid);
+
+    boolean create(PartyFaculty partyFaculty);
+
+    boolean remove(String id);
 }

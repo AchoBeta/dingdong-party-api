@@ -1,8 +1,6 @@
 package com.dingdong.party.admin.security.config;
 
-
 import com.dingdong.party.admin.security.server.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
+import javax.annotation.Resource;
+
 /**
  * Security 配置类
  */
@@ -22,38 +22,37 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
 @EnableWebSecurity
 public class TokenWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-
-    @Autowired
+    @Resource
     private DefaultPasswordEncoder defaultPasswordEncoder;
 
     // 登录成功处理器
-    @Autowired
+    @Resource
     private AuthenticationSuccessHandler authenticationSuccessHandler;
 
     // 登录失败处理器
-    @Autowired
+    @Resource
     private AuthenticationFailHandlerImpl authenticationFailHandler;
 
     // 未登录处理器
-    @Autowired
+    @Resource
     private AuthenticationEntryPointImpl authenticationEntryPoint;
 
     // 权限不足处理器
-    @Autowired
+    @Resource
     private AccessDeniedHandlerImpl accessDeniedHandler;
 
     // 注销成功处理器
-    @Autowired
+    @Resource
     private LogoutSuccessHandlerImpl logoutSuccessHandler;
 
     // 账号异地登录下线
-    @Autowired
+    @Resource
     private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
 
-    @Autowired
+    @Resource
     private UserDetailsService userDetailsService;
 
-    @Autowired
+    @Resource
     private CheckTokenFilter checkTokenFilter;
 
     @Value("${application.login-url}")

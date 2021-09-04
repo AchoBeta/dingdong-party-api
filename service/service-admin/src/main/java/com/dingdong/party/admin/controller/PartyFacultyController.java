@@ -1,18 +1,16 @@
 package com.dingdong.party.admin.controller;
 
-
 import com.dingdong.party.admin.entity.PartyFaculty;
 import com.dingdong.party.admin.service.PartyFacultyService;
 import com.dingdong.party.commonUtils.result.Result;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.BeanUtils;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
-
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -28,7 +26,7 @@ import java.util.List;
 @RequestMapping("/institutes")
 public class PartyFacultyController {
 
-    @Autowired
+    @Resource
     PartyFacultyService facultyService;
 
     @ApiOperation("获取全部学院信息")
@@ -47,6 +45,39 @@ public class PartyFacultyController {
         if (list != null)
             return Result.ok().data("total", list.size()).data("list", list);
         return Result.error().message("暂无记录");
+    }
+
+    @ApiOperation("删除学院 / 专业")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "学院 / 专业id", type = "String", required = true)
+    })
+    @DeleteMapping("/{id}")
+    public Result delete(@PathVariable("id") String id) {
+        if (facultyService.remove(id))
+            return Result.ok();
+        return Result.error().message("删除失败");
+    }
+
+    @ApiOperation("创建学院 / 专业")
+    @PostMapping("")
+    public Result create(@RequestBody PartyFaculty partyFaculty) {
+        if (facultyService.create(partyFaculty))
+            return Result.ok().data("id", partyFaculty.getId());
+        return Result.error().message("创建失败");
+    }
+
+    @ApiOperation("修改学院 / 专业")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "学院 / 专业id", type = "String", required = true)
+    })
+    @PutMapping("/{id}")
+    public Result update(@PathVariable String id, @RequestBody PartyFaculty partyFaculty) {
+        PartyFaculty faculty = new PartyFaculty();
+        BeanUtils.copyProperties(partyFaculty, faculty);
+        faculty.setId(id);
+        if (facultyService.updateById(faculty))
+            return Result.ok().data("id", id);
+        return Result.error().message("修改失败");
     }
 
 }
