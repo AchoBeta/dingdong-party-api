@@ -34,7 +34,6 @@ public class PartyUserStageController extends BaseController {
     @Autowired
     PartyUserStageService userStageService;
 
-
     @ApiOperation("用户批量进入下一阶段")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userIds", value = "用户id数组", type = "String[]", required = true),

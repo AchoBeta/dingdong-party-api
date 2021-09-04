@@ -1,6 +1,5 @@
 package com.dingdong.party.user.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dingdong.party.user.entity.PartyStage;
 import com.dingdong.party.user.entity.vo.StageCountEntity;
 import com.dingdong.party.user.entity.vo.StageEntity;
@@ -9,12 +8,10 @@ import com.dingdong.party.user.mapper.PartyStageMapper;
 import com.dingdong.party.user.mapper.PartyTaskMapper;
 import com.dingdong.party.user.service.PartyStageService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.junit.Test;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.annotation.Target;
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,10 +26,10 @@ import java.util.stream.Collectors;
 @Service
 public class PartyStageServiceImpl extends ServiceImpl<PartyStageMapper, PartyStage> implements PartyStageService {
 
-    @Autowired
+    @Resource
     PartyStageMapper stageMapper;
 
-    @Autowired
+    @Resource
     PartyTaskMapper taskMapper;
 
     @Override
@@ -60,6 +57,16 @@ public class PartyStageServiceImpl extends ServiceImpl<PartyStageMapper, PartySt
     @Override
     public Integer queryGradeNum() {
         return stageMapper.queryNum("14192307563");
+    }
+
+    @Override
+    public Boolean updatePeriodsNum() {
+        return stageMapper.updateNum("12462534234");
+    }
+
+    @Override
+    public Boolean updateGradeNum() {
+        return stageMapper.updateNum("14192307563");
     }
 
     // 获取数据

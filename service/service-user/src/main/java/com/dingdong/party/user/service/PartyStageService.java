@@ -26,5 +26,10 @@ public interface PartyStageService extends IService<PartyStage> {
 
     Integer queryGradeNum();
 
+    Boolean updatePeriodsNum();
+
+    Boolean updateGradeNum();
+
     List<StageCountEntity> queryStageCount();
+
 }

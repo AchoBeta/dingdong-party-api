@@ -6,6 +6,7 @@ import com.dingdong.party.user.entity.vo.StageCountEntity;
 import com.dingdong.party.user.entity.vo.StageEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -25,6 +26,9 @@ public interface PartyStageMapper extends BaseMapper<PartyStage> {
 
     @Select("select num from party_others where id = #{id}")
     Integer queryNum(String id);
+
+    @Update("update num from party_others where id = #{id}")
+    Boolean updateNum(String id);
 
     List<StageCountEntity> queryStageCount();
 }

@@ -5,11 +5,10 @@ import com.dingdong.party.user.entity.vo.StageCountEntity;
 import com.dingdong.party.user.service.PartyStageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
-
 
 /**
  * <p>
@@ -24,7 +23,7 @@ import java.util.List;
 @RequestMapping("/others")
 public class PartyOthersController {
 
-    @Autowired
+    @Resource
     PartyStageService stageService;
 
     @ApiOperation("获取最高期数")
@@ -39,6 +38,22 @@ public class PartyOthersController {
     public Result queryGradeNum() {
         Integer num = stageService.queryGradeNum();
         return Result.ok().data("num", num);
+    }
+
+    @ApiOperation("修改最高期数")
+    @PutMapping("/max-periods")
+    public Result updatePeriodsNum() {
+        if (stageService.updatePeriodsNum())
+            return Result.ok().message("修改成功");
+        return Result.error().message("修改失败");
+    }
+
+    @ApiOperation("获取最高年级")
+    @PutMapping("/max-grade")
+    public Result updateGradeNum() {
+        if (stageService.updateGradeNum())
+            return Result.ok().message("修改成功");
+        return Result.error().message("修改失败");
     }
 
     @ApiOperation("统计各阶段人数")
