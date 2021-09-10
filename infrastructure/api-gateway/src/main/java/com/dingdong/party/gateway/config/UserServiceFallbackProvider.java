@@ -17,7 +17,7 @@ import java.io.InputStream;
 @Component
 public class UserServiceFallbackProvider implements FallbackProvider {
 
-    private final static  String fallback = "服务异常,请联系管理员";
+    private final static String fallback = "服务异常,请联系管理员";
 
     @Override
     public String getRoute() {

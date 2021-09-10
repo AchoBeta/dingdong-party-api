@@ -52,7 +52,8 @@ public class AuthGlobalFilter extends ZuulFilter {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
         String requestUrl = request.getRequestURL().toString();
-        return !requestUrl.contains("login") && !requestUrl.contains("logout") && !requestUrl.contains("backstage") && !requestUrl.contains("api-docs");  // 排除登录，登出和 swagger
+        // 排除登录，登出和 swagger
+        return !requestUrl.contains("login") && !requestUrl.contains("logout") && !requestUrl.contains("backstage") && !requestUrl.contains("api-docs");
     }
 
     @SneakyThrows

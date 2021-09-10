@@ -26,9 +26,9 @@ public interface PartyStageService extends IService<PartyStage> {
 
     Integer queryGradeNum();
 
-    Boolean updatePeriodsNum(String id);
+    Boolean updatePeriodsNum(String id, Integer periodsNum);
 
-    Boolean updateGradeNum(String id);
+    Boolean updateGradeNum(String id, Integer gradeNum);
 
     List<StageCountEntity> queryStageCount();
 
