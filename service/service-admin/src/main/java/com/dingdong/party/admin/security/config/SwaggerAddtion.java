@@ -59,6 +59,15 @@ public class SwaggerAddtion implements ApiListingScannerPlugin {
                                 .parameterAccess("access")
                                 .required(true)
                                 .modelRef(new ModelRef("string"))
+                                .build(),
+                        new ParameterBuilder()
+                                .description("验证码")
+                                .type(new TypeResolver().resolve(String.class))
+                                .name("code")
+                                .parameterType("query")
+                                .parameterAccess("access")
+                                .required(true)
+                                .modelRef(new ModelRef("string"))
                                 .build()
                 ))
                 .responseMessages(Collections.singleton(

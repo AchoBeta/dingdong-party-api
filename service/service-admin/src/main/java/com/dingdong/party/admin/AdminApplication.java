@@ -10,10 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {"com.dingdong.party"})
 public class AdminApplication {
     public static void main(String[] args) {
-        try {
-            SpringApplication.run(AdminApplication.class, args);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SpringApplication.run(AdminApplication.class, args);
     }
 }

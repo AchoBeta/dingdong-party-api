@@ -49,7 +49,7 @@ public class PartyStudent implements Serializable {
     private String dormitoryArea;
 
     @ApiModelProperty(value = "宿舍号")
-    private byte[] dormitoryNo;
+    private Integer dormitoryNo;
 
     @ApiModelProperty(value = "性别(男:1,女:0)")
     private Boolean gender;

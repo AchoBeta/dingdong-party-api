@@ -18,9 +18,9 @@ public class GlobalExceptionHandler {
     }
 
     //特定异常
-    @ExceptionHandler(ArithmeticException.class)
+    @ExceptionHandler(RuntimeException.class)
     @ResponseBody //为了返回数据
-    public Result error(ArithmeticException e) {
+    public Result error(RuntimeException e) {
         e.printStackTrace();
         return Result.error().message("执行了ArithmeticException异常处理..");
     }

@@ -17,7 +17,7 @@ import java.io.IOException;
 @Component("authenticationEntryPoint")
 public class AuthenticationEntryPointImpl implements org.springframework.security.web.AuthenticationEntryPoint {
     @Override
-    public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
+    public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException {
         Result result = Result.error(ResultCode.USER_NOT_LOGIN);
         httpServletResponse.setContentType("text/json;charset=utf-8");
         httpServletResponse.getWriter().write(new ObjectMapper().writeValueAsString(result));

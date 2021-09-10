@@ -61,6 +61,9 @@ public class TokenWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${application.logout-url}")
     private String logoutUrl;
 
+    @Value("${application.image-code-url}")
+    private String imageCodeUrl;
+
     /**
      * 配置设置
      * @param http
@@ -120,7 +123,7 @@ public class TokenWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //补充路径，近期在搭建swagger接口文档时，通过浏览器控制台发现该/webjars路径下的文件被拦截，故加上此过滤条件即可。
                 "/webjars/**",
                 "/api-docs",
-                "/doc.html", "/image-code"
+                "/doc.html", imageCodeUrl
         );
     }
 }
