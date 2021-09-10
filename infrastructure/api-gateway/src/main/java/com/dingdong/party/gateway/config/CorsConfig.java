@@ -1,7 +1,5 @@
 package com.dingdong.party.gateway.config;
 
-
-
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +14,6 @@ import java.util.Arrays;
  * 统一解决跨域
  */
 @Configuration
-//@Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsConfig {
 
     @Bean

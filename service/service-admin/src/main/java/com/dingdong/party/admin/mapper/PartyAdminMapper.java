@@ -4,6 +4,7 @@ import com.dingdong.party.admin.entity.PartyAdmin;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dingdong.party.admin.entity.vo.*;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -18,6 +19,7 @@ import java.util.HashMap;
  * @author testjava
  * @since 2021-07-23
  */
+@Mapper
 public interface PartyAdminMapper extends BaseMapper<PartyAdmin> {
 
     @Update("update party_user set status = #{arg1}, status_reason = #{arg2} where user_id = #{arg0}")

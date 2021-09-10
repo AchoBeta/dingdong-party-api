@@ -1,25 +1,18 @@
 package com.dingdong.party.user.controller;
 
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dingdong.party.commonUtils.result.Result;
 import com.dingdong.party.user.entity.PartyStage;
-import com.dingdong.party.user.entity.vo.StageCountEntity;
-import com.dingdong.party.user.entity.vo.StageEntity;
 import com.dingdong.party.user.service.PartyStageService;
 import com.dingdong.party.user.service.PartyTaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
