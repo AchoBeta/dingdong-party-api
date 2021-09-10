@@ -1,6 +1,5 @@
 package com.dingdong.party.admin.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dingdong.party.admin.entity.PartyAdmin;
@@ -64,14 +63,14 @@ public class PartyAdminServiceImpl extends ServiceImpl<PartyAdminMapper, PartyAd
         Date now = new Date();
         Date startTime = timeEntity.getStartTime();
         Date endTime = timeEntity.getEndTime();
-        Long start = startTime.getTime() - now.getTime();
+        Long start = (startTime.getTime() - now.getTime()) / 1000;
         // 开启活动开始的定时任务
         scheduledThreadPool.schedule(() -> {
                 adminMapper.examineActivity(activityId, 4);
         }, start, TimeUnit.SECONDS);
 
         // 开启活动结束的定时任务
-        Long end = endTime.getTime() - now.getTime();
+        Long end = (endTime.getTime() - now.getTime()) / 1000;
         scheduledThreadPool.schedule(() -> {
             adminMapper.examineActivity(activityId, 5);
         }, end, TimeUnit.SECONDS);
