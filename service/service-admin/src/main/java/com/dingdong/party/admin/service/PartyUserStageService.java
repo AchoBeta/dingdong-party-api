@@ -15,9 +15,7 @@ import java.util.Date;
  */
 public interface PartyUserStageService extends IService<PartyUserStage> {
 
-    boolean changeUserStage(String[] userIds, Integer stageId, Date time);
+    boolean updateStageByUserIds(String[] userIds, Integer stageId, Date time);
 
-    boolean back(String[] userIds, Integer stageId, Integer newTaskId);
-
-    boolean updateTime(String[] userIds, String stageId, Date time);
+    boolean updateStageByCondition(String branchId, String groupId, Integer stage, Integer stageId, String[] userIds, Date time);
 }

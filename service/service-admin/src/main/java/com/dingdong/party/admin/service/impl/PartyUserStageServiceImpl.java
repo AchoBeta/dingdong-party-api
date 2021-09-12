@@ -1,5 +1,6 @@
 package com.dingdong.party.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dingdong.party.admin.entity.PartyUserStage;
 import com.dingdong.party.admin.mapper.PartyUserStageMapper;
 import com.dingdong.party.admin.service.PartyUserStageService;
@@ -7,9 +8,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -25,40 +27,61 @@ public class PartyUserStageServiceImpl extends ServiceImpl<PartyUserStageMapper,
     @Autowired
     PartyUserStageMapper userStageMapper;
 
-    // 批量改变用户阶段
+    /**
+     * 按用户 id 修改/增加阶段
+     * @param userIds
+     * @param stageId
+     * @param time
+     * @return
+     */
     @Override
-    public boolean changeUserStage(String[] userIds, Integer stageId, Date time) {
-        int n = userIds.length;
-        List<PartyUserStage> stages = new ArrayList<>();
-        for (int i = 0; i < n; i++)
-            stages.add(new PartyUserStage().setUserId(userIds[i]).setStageId(stageId).setTime(time));
-        if (!this.saveBatch(stages, n))
-            return false;
-        Integer taskId = userStageMapper.getOneTask(stageId);   // 获取阶段的第一个任务
-        for (int i = 0; i < n; i++) {
-            if (userStageMapper.updateUserStage(userIds[i], stageId, taskId))
-                return false;    // 更新用户表
+    public boolean updateStageByUserIds(String[] userIds, Integer stageId, Date time) {
+        for (String userId : userIds) {
+            QueryWrapper<PartyUserStage> wrapper = new QueryWrapper<>();
+            if (!userStageMapper.updateStage(userId, stageId) || !updateOrSave(wrapper, userId, stageId, time))   // 修改用户表的阶段
+                return false;
         }
         return true;
     }
 
-
-    // 回退阶段任务
+    /**
+     * 按条件 - 用户id 修改/增加阶段
+     * @param branchId
+     * @param groupId
+     * @param stage
+     * @param stageId
+     * @param userIds
+     * @param time
+     * @return
+     */
     @Override
-    public boolean back(String[] userIds, Integer stageId, Integer newTaskId) {
-        int n = userIds.length;
-        for (int i = 0; i < n; i++) {
-            userStageMapper.updateUserStage(userIds[i], stageId, newTaskId);
+    public boolean updateStageByCondition(String branchId, String groupId, Integer stage, Integer stageId, String[] userIds, Date time) {
+        Set<String> userIdSet = new HashSet<>();
+        for (String userId : userIds) {
+            userIdSet.add(userId);
         }
-        return false;
+        List<String> userIdList = userStageMapper.getUser(branchId, groupId, stage);  // 获取需要改变的用户
+        QueryWrapper<PartyUserStage> wrapper = new QueryWrapper<>();
+        for (String userId : userIdList) {
+            if (userIdSet.contains(userId))   // 去掉选中的用户
+                continue;
+            if (!userStageMapper.updateStage(userId, stageId) || !updateOrSave(wrapper, userId, stageId, time))   // 修改用户表的阶段
+                return false;
+        }
+        return true;
     }
 
-    // 批量修改时间
-    @Override
-    public boolean updateTime(String[] userIds, String stageId, Date time) {
-        for (String userId : userIds) {
-            if (!userStageMapper.updateTime(userId, stageId, time))
-                return false;
+    public boolean updateOrSave(QueryWrapper<PartyUserStage> wrapper, String userId, Integer stageId, Date time) {
+        wrapper.eq("user_id", userId);
+        wrapper.eq("stage_id", stageId);
+        PartyUserStage userStage;
+        if ((userStage = userStageMapper.selectOne(wrapper)) != null) {  // 判断是修改阶段还是增加阶段
+            userStage.setTime(time);
+            userStageMapper.updateById(userStage);
+        } else {
+            userStage = new PartyUserStage();
+            userStage.setUserId(userId).setStageId(stageId).setTime(time);
+            userStageMapper.insert(userStage);
         }
         return true;
     }

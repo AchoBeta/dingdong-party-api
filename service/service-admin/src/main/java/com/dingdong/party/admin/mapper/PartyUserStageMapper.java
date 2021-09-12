@@ -2,10 +2,14 @@ package com.dingdong.party.admin.mapper;
 
 import com.dingdong.party.admin.entity.PartyUserStage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -15,16 +19,30 @@ import java.util.Date;
  * @author testjava
  * @since 2021-08-05
  */
+@Mapper
 public interface PartyUserStageMapper extends BaseMapper<PartyUserStage> {
 
-    // 获取阶段的第一个任务id
-    @Select("SELECT id FROM party_task WHERE stage_id = #{stageId} LIMIT 0, 1")
-    Integer getOneTask(Integer stageId);
 
-    // 更新用户表的阶段
-    @Update("update party_user set stage_id = #{arg1}, task_id = #{arg2} where user_id = #{arg0}")
-    boolean updateUserStage(String userId, Integer stageId, Integer taskId);
 
-    @Update("update party_user_stage set time = #{arg2} where user_id = #{arg0} and stage_id = #{arg1}")
-    boolean updateTime(String userId, String stageId, Date time);
+    @Update("update party_user set stage_id = #{arg1} where user_id = #{arg0}")
+    boolean updateStage(String userId, Integer stageId);
+
+    @Select({"<script>",
+        "select user_id from party_user where status = 1 AND is_deleted = 0",
+        "<when test='branchId != null'>", "AND branch_id = #{branchId}","</when>",
+        "<when test='groupId != null'>", "AND group_id = #{groupId}","</when>",
+        "<when test='stage != null'>", "AND stage = #{stage}","</when>",
+        "</script>"})
+    List<String> getUser(@Param("branchId") String branchId, @Param("groupId") String groupId, @Param("stage") Integer stage);
+
+    @Select("select user_id where user_id = #{arg0} and stage_id = #{arg1} and is_deleted = 0")
+    String getUserStage(String userId, Integer stageId);
+
+    // 更新用户阶段表
+    @Update("update party_user_stage time = #{arg1}, where id = #{arg0}")
+    boolean updateUserStage(String id, Date time);
+
+    // 插入用户阶段表
+    @Insert("insert into party_user (user_id, stage_id, time) values (#{arg0}, #{arg1}, #{arg2}")
+    boolean insertUserStage(String userId, Integer stageId, Date time);
 }

@@ -10,12 +10,16 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -34,65 +38,28 @@ public class PartyUserStageController extends BaseController {
     @Autowired
     PartyUserStageService userStageService;
 
-    @ApiOperation("用户批量进入下一阶段")
+    @ApiOperation("批量修改阶段")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userIds", value = "用户id数组", type = "String[]", required = true),
-            @ApiImplicitParam(name = "stageId", value = "阶段id", type = "int", required = true),
-            @ApiImplicitParam(name = "time", value = "进入阶段时间", type = "Date", required = true),
-            @ApiImplicitParam(name = "groupIds", value = "党小组id", type = "String", required = true)
-    })
-    @PostMapping("/change")
-    public Result changeUserStage(@RequestParam("userIds") String[] userIds, @RequestParam("stageId") Integer stageId, @RequestParam("time") Date time, @RequestParam("groupIds") String[] groupIds, HttpServletRequest request) {
-        String token = request.getHeader("token");
-        for (String groupId : groupIds) {
-            if (getGroupAdminAuthority(token, groupId) < 0)
-                return Result.error(ResultCode.NO_PERMISSION);
-        }
-        if (userStageService.changeUserStage(userIds, stageId, time))
-            return Result.ok();
-        return Result.error().message("更改失败");
-    }
-
-
-    @ApiOperation("回退阶段任务")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userIds", value = "用户id数组", type = "String[]", required = true),
-            @ApiImplicitParam(name = "stageId", value = "阶段id", type = "int", required = true),
-            @ApiImplicitParam(name = "oldTaskId", value = "原任务id", type = "int", required = true),
-            @ApiImplicitParam(name = "newTaskId", value = "新任务id", type = "int", required = true),
-            @ApiImplicitParam(name = "groupId", value = "党支部id", type = "String", required = true)
-    })
-    @PostMapping("back")
-    public Result back(@RequestParam("userIds") String[] userIds, @RequestParam("stageId") Integer stageId, @RequestParam("oldTaskId") Integer oldTaskId,
-                       @RequestParam("newTaskId") Integer newTaskId, @RequestParam("groupId") String groupId, HttpServletRequest request) {
-        if (oldTaskId < newTaskId)
-            return Result.error().message("只能回退到上面的版本");
-        String token = request.getHeader("token");
-        if (getGroupAdminAuthority(token, groupId) > -1) {
-            if (userStageService.back(userIds, stageId, newTaskId))
-                return Result.ok();
-            return Result.error().message("回退失败");
-        }
-        return Result.error(ResultCode.NO_PERMISSION);
-    }
-
-    @ApiOperation("批量修改阶段时间")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userIds", value = "用户id数组", type = "String[]", required = true),
-            @ApiImplicitParam(name = "stageId", value = "阶段id", type = "int", required = true),
-            @ApiImplicitParam(name = "time", value = "时间", type = "Date", required = true),
-            @ApiImplicitParam(name = "groupId", value = "党支部id", type = "String", required = true)
+            @ApiImplicitParam(name = "branchId", value = "党支部id", type = "String"),
+            @ApiImplicitParam(name = "groupId", value = "党组id", type = "int"),
+            @ApiImplicitParam(name = "stage", value = "期数", type = "Integer"),
+            @ApiImplicitParam(name = "stageId", value = "所属阶段", type = "Integer", required = true),
+            @ApiImplicitParam(name = "userIds", value = "用户数组（当有条件时，此为不要的用户，无条件是为更改的用户）", type = "List"),
+            @ApiImplicitParam(name = "time", value = "时间", type = "Date", required = true)
     })
     @PostMapping("batch-update-time")
-    public Result updateTime(@RequestParam("userIds") String[] userIds, @RequestParam("stageId") String stageId,
-                             @RequestParam("time") Date time, @RequestParam("groupId") String groupId,  HttpServletRequest request) {
-        String token = request.getHeader("token");
-        if (getGroupAdminAuthority(token, groupId) > -1) {
-            if (userStageService.updateTime(userIds, stageId, time))
+    public Result updateStage(@RequestParam(value = "branchId", required = false) String branchId, @RequestParam(value = "groupId", required = false) String groupId,
+                             @RequestParam(value = "stageId") Integer stageId, @RequestBody(required = false) String[] userIds,
+                             @RequestParam("time") String time, @RequestParam(value = "stage", required = false) Integer stage) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = sdf.parse(time);
+        if (branchId == null && groupId == null && stage == null) {
+            if (userStageService.updateStageByUserIds(userIds, stageId, date))
                 return Result.ok();
-            return Result.error().message("修改失败");
+        } else {
+            if (userStageService.updateStageByCondition(branchId, groupId, stage, stageId, userIds, date))
+                return Result.ok();
         }
-        return Result.error(ResultCode.NO_PERMISSION);
+        return Result.error().message("修改失败");
     }
 }
-
