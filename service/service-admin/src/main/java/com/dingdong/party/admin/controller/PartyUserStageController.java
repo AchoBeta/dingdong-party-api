@@ -40,24 +40,29 @@ public class PartyUserStageController extends BaseController {
 
     @ApiOperation("批量修改阶段")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "branchId", value = "党支部id", type = "String"),
-            @ApiImplicitParam(name = "groupId", value = "党组id", type = "int"),
-            @ApiImplicitParam(name = "stage", value = "期数", type = "Integer"),
-            @ApiImplicitParam(name = "stageId", value = "所属阶段", type = "Integer", required = true),
+            @ApiImplicitParam(name = "branchId", value = "党支部id", dataType = "String"),
+            @ApiImplicitParam(name = "groupId", value = "党组id", dataType = "int"),
+            @ApiImplicitParam(name = "stage", value = "期数", dataType  = "int"),
+            @ApiImplicitParam(name = "stageId", value = "修改阶段", dataType  = "int", required = true),
+            @ApiImplicitParam(name = "institute", value = "学院名称", dataType = "String"),
+            @ApiImplicitParam(name = "major", value = "专业名称", dataType = "String"),
+            @ApiImplicitParam(name = "grade", value = "年级", dataType = "Integer"),
             @ApiImplicitParam(name = "userIds", value = "用户数组（当有条件时，此为不要的用户，无条件是为更改的用户）", type = "List"),
-            @ApiImplicitParam(name = "time", value = "时间", type = "Date", required = true)
+            @ApiImplicitParam(name = "time", value = "时间", dataType = "Date", required = true)
     })
     @PostMapping("batch-update-time")
     public Result updateStage(@RequestParam(value = "branchId", required = false) String branchId, @RequestParam(value = "groupId", required = false) String groupId,
-                             @RequestParam(value = "stageId") Integer stageId, @RequestBody(required = false) String[] userIds,
-                             @RequestParam("time") String time, @RequestParam(value = "stage", required = false) Integer stage) throws ParseException {
+                              @RequestParam(value = "stageId") Integer stageId, @RequestBody() String[] userIds,
+                              @RequestParam(value = "institute", required = false) String institute, @RequestParam(value = "grade", required = false) Integer grade,
+                              @RequestParam(value = "major", required = false) String major, @RequestParam("time") String time,
+                              @RequestParam(value = "stage", required = false) Integer stage) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date = sdf.parse(time);
-        if (branchId == null && groupId == null && stage == null) {
+        if (branchId == null && groupId == null && stage == null && institute != null && grade != null && major != null) {
             if (userStageService.updateStageByUserIds(userIds, stageId, date))
                 return Result.ok();
         } else {
-            if (userStageService.updateStageByCondition(branchId, groupId, stage, stageId, userIds, date))
+            if (userStageService.updateStageByCondition(branchId, groupId, stage, stageId, institute, grade, major, userIds, date))
                 return Result.ok();
         }
         return Result.error().message("修改失败");

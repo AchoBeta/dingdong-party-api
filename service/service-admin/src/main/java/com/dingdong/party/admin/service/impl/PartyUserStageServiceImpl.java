@@ -55,12 +55,12 @@ public class PartyUserStageServiceImpl extends ServiceImpl<PartyUserStageMapper,
      * @return
      */
     @Override
-    public boolean updateStageByCondition(String branchId, String groupId, Integer stage, Integer stageId, String[] userIds, Date time) {
+    public boolean updateStageByCondition(String branchId, String groupId, Integer stage, Integer stageId, String institute, Integer grade, String major, String[] userIds, Date time) {
         Set<String> userIdSet = new HashSet<>();
         for (String userId : userIds) {
             userIdSet.add(userId);
         }
-        List<String> userIdList = userStageMapper.getUser(branchId, groupId, stage);  // 获取需要改变的用户
+        List<String> userIdList = userStageMapper.getUser(branchId, groupId, stage, institute, grade, major);  // 获取需要改变的用户
         QueryWrapper<PartyUserStage> wrapper = new QueryWrapper<>();
         for (String userId : userIdList) {
             if (userIdSet.contains(userId))   // 去掉选中的用户

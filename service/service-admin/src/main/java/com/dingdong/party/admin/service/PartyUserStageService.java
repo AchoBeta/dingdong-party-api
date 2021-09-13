@@ -17,5 +17,5 @@ public interface PartyUserStageService extends IService<PartyUserStage> {
 
     boolean updateStageByUserIds(String[] userIds, Integer stageId, Date time);
 
-    boolean updateStageByCondition(String branchId, String groupId, Integer stage, Integer stageId, String[] userIds, Date time);
+    boolean updateStageByCondition(String branchId, String groupId, Integer stage, Integer stageId, String institute, Integer grade, String major, String[] userIds, Date time);
 }

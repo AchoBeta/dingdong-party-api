@@ -27,13 +27,33 @@ public interface PartyUserStageMapper extends BaseMapper<PartyUserStage> {
     @Update("update party_user set stage_id = #{arg1} where user_id = #{arg0}")
     boolean updateStage(String userId, Integer stageId);
 
-    @Select({"<script>",
-        "select user_id from party_user where status = 1 AND is_deleted = 0",
-        "<when test='branchId != null'>", "AND branch_id = #{branchId}","</when>",
-        "<when test='groupId != null'>", "AND group_id = #{groupId}","</when>",
-        "<when test='stage != null'>", "AND stage = #{stage}","</when>",
+    @Select({
+        "<script>",
+            "select user_id from party_user where status = 1 AND is_deleted = 0",
+            "<when test='branchId != null'>",
+                "AND branch_id = #{branchId}",
+            "</when>",
+            "<when test='groupId != null'>",
+                "AND group_id = #{groupId}",
+            "</when>",
+            "<when test='stage != null'>",
+                "AND stage = #{stage}",
+            "</when>",
+            "<when test='institute != null || grade != null || major != null'>",
+                "AND student_id = (select student_id from party_student where is_deleted = 0",
+                "<when test='institute != null'>",
+                    "AND institute = #{institute}",
+                "</when>",
+                "<when test='grade != null'>",
+                    "AND grade = #{grade}",
+                "</when>",
+                "<when test='major != null'>",
+                    "AND major = #{major}",
+                "</when>",
+            "</when>",
         "</script>"})
-    List<String> getUser(@Param("branchId") String branchId, @Param("groupId") String groupId, @Param("stage") Integer stage);
+    List<String> getUser(@Param("branchId") String branchId, @Param("groupId") String groupId, @Param("stage") Integer stage,
+                         @Param("institute") String institute, @Param("grade") Integer grade, @Param("major") String major);
 
     @Select("select user_id where user_id = #{arg0} and stage_id = #{arg1} and is_deleted = 0")
     String getUserStage(String userId, Integer stageId);
