@@ -20,4 +20,4 @@ eureka:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  mapper-locations: classpath:mybatis/mapper/*.xml
+  mapper-locations: classpath:com/dingdong/party/**/mapper/xml/*.xml

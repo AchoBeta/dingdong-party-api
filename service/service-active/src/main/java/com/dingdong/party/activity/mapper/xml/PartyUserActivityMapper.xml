@@ -2,4 +2,56 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dingdong.party.activity.mapper.PartyUserActivityMapper">
 
+    <resultMap id="UserEntity" type="com.dingdong.party.activity.entity.vo.UserEntity"></resultMap>
+
+    <select id="getAllUser" parameterType="String" resultMap="UserEntity">
+        select a.*
+        from (select user_id     as userId,
+                     name        as name,
+                     student_id  as studentId,
+                     teacher_id  as teacherId,
+                     branch_id   as branchId,
+                     branch_name as branchName,
+                     group_id    as groupId,
+                     group_name  as groupName,
+                     stage_id    as stageId
+              from party_user) as a,
+             (select user_id
+              from party_user_activity
+              where activity_id = #{activityId}) as b
+        where a.userId = b.user_id
+    </select>
+
+    <select id="query" resultType="java.util.Map">
+        SELECT a.activity_id as activityId,
+        b.name as name,
+        b.student_id as studentId,
+        b.teacher_id as teacherId,
+        d.id as branchId,
+        d.name as branchName,
+        c.id as groupId,
+        c.name as groupName,
+        a.status as status,
+        b.stage as stage
+        FROM party_user_activity a,
+        party_user b,
+        party_group c,
+        party_branch d
+        WHERE a.user_id = b.user_id
+        AND a.group_id = c.id
+        AND a.branch_id = d.id
+        <if test="userId != null">
+            AND a.user_id = #{userId}
+        </if>
+        <if test="activityId != null">
+            AND a.activity_id = #{activityId}
+        </if>
+        <if test="status != null">
+            AND a.status = #{status}
+        </if>
+        <if test="branchId != null">
+            AND a.branch_id = #{branchId}
+        </if>
+    </select>
+
 </mapper>

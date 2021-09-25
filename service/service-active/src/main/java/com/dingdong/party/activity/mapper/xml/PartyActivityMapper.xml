@@ -2,4 +2,34 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dingdong.party.activity.mapper.PartyActivityMapper">
 
+    <select id="getList" resultType="java.util.Map">
+        SELECT a.id as activityId, a.name as activityName, a.director_id as directorId, a.director_name as
+        directorName,
+        b.id as branchId, b.name as branchName, c.id as groupId, c.name as groupName,
+        a.start_time as startTime, a.end_time as endTime, a.status as status
+        FROM party_activity a, party_branch b, party_group c
+        WHERE a.branch_id = b.id
+        <if test="name != null">
+            AND a.name = #{name}
+        </if>
+        <if test="branchId != null">
+            AND a.branch_id = #{breachId}
+        </if>
+        <if test="directorId != null">
+            AND a.director_id = #{directorId}
+        </if>
+        <if test="directorName != null">
+            AND a.director_name = #{directorName}
+        </if>
+        <if test="status != null">
+            AND a.status = #{status}
+        </if>
+        <if test="startTime != null">
+            AND a.start_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            AND a.end_time >= #{endTime}
+        </if>
+    </select>
+
 </mapper>

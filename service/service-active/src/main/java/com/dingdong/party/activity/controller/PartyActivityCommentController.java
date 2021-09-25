@@ -1,6 +1,5 @@
 package com.dingdong.party.activity.controller;
 
-
 import com.dingdong.party.activity.entity.PartyActivityComment;
 import com.dingdong.party.activity.service.PartyActivityCommentService;
 import com.dingdong.party.commonUtils.result.Result;
@@ -8,14 +7,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author testjava
@@ -26,7 +25,7 @@ import java.util.Map;
 @RequestMapping("/activities/{activityId}/comments")
 public class PartyActivityCommentController {
 
-    @Autowired
+    @Resource
     PartyActivityCommentService commentService;
 
     @GetMapping("/{id}")
@@ -52,8 +51,9 @@ public class PartyActivityCommentController {
     public Result query(@PathVariable(value = "activityId") String activityId,
                         @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Map<String, Object> map = commentService.getList(activityId, page, size);
-        if (map != null)
+        if (map != null) {
             return Result.ok().data("list", map);
+        }
         return Result.error().message("查询失败");
     }
 
@@ -64,8 +64,9 @@ public class PartyActivityCommentController {
     @ApiOperation("创建")
     public Result create(@PathVariable("activityId") String activityId, @RequestBody PartyActivityComment comment) {
         comment.setActivityId(activityId);
-        if (commentService.save(comment))
+        if (commentService.save(comment)) {
             return Result.ok().data("id", comment.getId());
+        }
         return Result.error().message("创建失败");
     }
 
@@ -78,8 +79,9 @@ public class PartyActivityCommentController {
     public Result update(@PathVariable("activityId") String activityId, @PathVariable("id") String id, @RequestBody PartyActivityComment comment) {
         comment.setActivityId(activityId);
         comment.setId(id);
-        if (commentService.updateById(comment))
+        if (commentService.updateById(comment)) {
             return Result.ok().data("id", id);
+        }
         return Result.error().message("修改失败");
     }
 
@@ -90,8 +92,9 @@ public class PartyActivityCommentController {
             @ApiImplicitParam(name = "id", value = "评论id", type = "String", required = true)
     })
     public Result delete(@PathVariable("activityId") String activityId, @PathVariable String id) {
-        if (commentService.removeById(id))
+        if (commentService.removeById(id)) {
             return Result.ok();
+        }
         return Result.error().message("删除失败");
     }
 }

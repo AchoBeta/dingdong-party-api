@@ -1,6 +1,5 @@
 package com.dingdong.party.activity.controller;
 
-
 import com.dingdong.party.activity.entity.PartyActivityDetails;
 import com.dingdong.party.activity.service.PartyActivityDetailsService;
 import com.dingdong.party.commonUtils.result.Result;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+
 /**
  * <p>
  *  前端控制器
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/activities/{activityId}")
 public class PartyActivityDetailsController {
 
-    @Autowired
+    @Resource
     PartyActivityDetailsService detailsService;
 
     @GetMapping("show-detail")
@@ -38,9 +39,9 @@ public class PartyActivityDetailsController {
     })
     public Result queryByActivityId(@PathVariable String activityId) {
         PartyActivityDetails details = detailsService.getById(activityId);
-        if (details != null)
-            return Result.ok().data("item", details);
+        if (details != null) return Result.ok().data("item", details);
         return Result.error().message("获取失败");
     }
+
 }
 

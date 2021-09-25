@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="UserActivityEntity", description="")
@@ -14,11 +13,11 @@ public class UserEntity {
     @ApiModelProperty(value = "用户id")
     private String userId;
 
-    @ApiModelProperty(value = "学生id")
-    private String studentId;
-
     @ApiModelProperty(value = "姓名")
     private String name;
+
+    @ApiModelProperty(value = "学生id")
+    private String studentId;
 
     @ApiModelProperty(value = "老师id")
     private String teacherId;

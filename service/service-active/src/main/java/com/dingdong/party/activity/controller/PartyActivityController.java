@@ -1,6 +1,5 @@
 package com.dingdong.party.activity.controller;
 
-
 import com.dingdong.party.activity.entity.PartyActivity;
 import com.dingdong.party.activity.entity.PartyActivityDetails;
 import com.dingdong.party.activity.entity.vo.ActivityDetailsEntity;
@@ -18,6 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
 import java.util.Map;
@@ -36,13 +36,13 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/activities")
 public class PartyActivityController {
 
-    @Autowired
+    @Resource
     RedisTemplate redisTemplate;
 
-    @Autowired
+    @Resource
     PartyActivityService activityService;
 
-    @Autowired
+    @Resource
     PartyActivityDetailsService detailsService;
 
     @ApiOperation("根据id查找活动")
@@ -73,14 +73,13 @@ public class PartyActivityController {
             @ApiImplicitParam(name = "page", value = "页号", type = "int"), @ApiImplicitParam(name = "size", value = "大小", type = "int")
     })
     @GetMapping("")
-    public Result query(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "groupId", required = false) String groupId,
+    public Result query(@RequestParam(value = "name", required = false) String name,
                         @RequestParam(value = "branchId", required = false) String branchId, @RequestParam(value = "startTime", required = false) String startTime,
                         @RequestParam(value = "endTime", required = false) String endTime, @RequestParam(value = "directorId", required = false) String directorId,
                         @RequestParam(value = "directorName", required = false) String directorName, @RequestParam(value = "status", required = false) Integer status,
                         @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
-        Map<Object, Object> map = activityService.getList(name, groupId, branchId, startTime, endTime, directorId, directorName, status, page, size);
-        if (map != null)
-            return Result.ok().data("list", map);
+        Map<Object, Object> map = activityService.getList(name, branchId, startTime, endTime, directorId, directorName, status, page, size);
+        if (map != null) return Result.ok().data("list", map);
         return Result.error().message("查无数据");
     }
 
@@ -88,9 +87,7 @@ public class PartyActivityController {
     @PostMapping("")
     public Result create(@RequestBody ActivityDetailsEntity activity, HttpServletRequest request) throws Exception {
         String activityId = activityService.create(activity);
-        if (activityId != null) {
-            return Result.ok().data("activityId", activityId);
-        }
+        if (activityId != null) return Result.ok().data("activityId", activityId);
         return Result.error().message("创建失败");
     }
 
@@ -98,7 +95,7 @@ public class PartyActivityController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "活动id", required = true, type = "String")
     })
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     public Result delete(@PathVariable String id, HttpServletRequest request) {
         activityService.deleteById(id);
         return Result.ok();
@@ -119,8 +116,7 @@ public class PartyActivityController {
     @ApiOperation("活动提交审核")
     @PostMapping("/{activityId}/commit")
     public Result commit(@PathVariable("activityId") String activityId, HttpServletRequest request) {
-        if (activityService.commit(activityId))
-            return Result.ok();
+        if (activityService.commit(activityId)) return Result.ok();
         return Result.error().message("提交失败");
     }
 

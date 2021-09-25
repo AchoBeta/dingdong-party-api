@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public interface PartyActivityService extends IService<PartyActivity> {
 
-    Map<Object, Object> getList(String name, String groupId, String branchId, String startTime, String endTime, String directorId, String directorName, Integer status, Integer page, Integer size);
+    Map<Object, Object> getList(String name, String branchId, String startTime, String endTime, String directorId, String directorName, Integer status, Integer page, Integer size);
 
     String create(ActivityDetailsEntity activity) throws Exception;
 
@@ -27,6 +27,5 @@ public interface PartyActivityService extends IService<PartyActivity> {
 
     boolean commit(String activityId);
 
-    // 小程序端显示所有活动
     Map<String, Object> queryAll(Integer page, Integer size);
 }

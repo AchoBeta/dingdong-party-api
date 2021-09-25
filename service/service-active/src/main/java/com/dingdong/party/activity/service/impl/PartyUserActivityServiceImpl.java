@@ -12,11 +12,14 @@ import com.dingdong.party.activity.mapper.PartyUserActivityMapper;
 import com.dingdong.party.activity.service.PartyActivityService;
 import com.dingdong.party.activity.service.PartyUserActivityService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.page.PageMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -29,10 +32,10 @@ import java.util.List;
 @Service
 public class PartyUserActivityServiceImpl extends ServiceImpl<PartyUserActivityMapper, PartyUserActivity> implements PartyUserActivityService {
 
-    @Autowired
+    @Resource
     PartyUserActivityMapper userActivityMapper;
 
-    @Autowired
+    @Resource
     PartyActivityMapper partyActivityMapper;
 
     @Override
@@ -74,25 +77,32 @@ public class PartyUserActivityServiceImpl extends ServiceImpl<PartyUserActivityM
 
     @Override
     public HashMap<String, Object> query(String userId, String activityId, Integer status, String branchId, String groupId, Integer page, Integer size) {
-        QueryWrapper<PartyUserActivity> wrapper = new QueryWrapper<>();
-        if (userId != null)
-            wrapper.eq("user_id", userId);
-        if (activityId != null)
-            wrapper.eq("activity_id", activityId);
-        if (status != null)
-            wrapper.eq("status", status);
-        if (branchId != null)
-            wrapper.eq("branch_id", branchId);
-        if (groupId != null)
-            wrapper.eq("group_id", groupId);
-        Page<PartyUserActivity> userActivityPage = new Page<>(page, size);
-        this.page(userActivityPage, wrapper);
-        long total = userActivityPage.getTotal();
-        if (total == 0)
-            return null;
+        PageMethod.startPage(page, size);
+        List<Map<String, Object>> res = userActivityMapper.query(userId, activityId, status, branchId, groupId);
+
+        for (Map<String, Object> user : res) {
+            user.put("isTeacher", user.get("teacherId") != null);
+        }
+
+//        QueryWrapper<PartyUserActivity> wrapper = new QueryWrapper<>();
+//        if (userId != null)
+//            wrapper.eq("user_id", userId);
+//        if (activityId != null)
+//            wrapper.eq("activity_id", activityId);
+//        if (status != null)
+//            wrapper.eq("status", status);
+//        if (branchId != null)
+//            wrapper.eq("branch_id", branchId);
+//        if (groupId != null)
+//            wrapper.eq("group_id", groupId);
+//        Page<PartyUserActivity> userActivityPage = new Page<>(page, size);
+//        this.page(userActivityPage, wrapper);
+
+        long total = res.size();
+        if (total == 0) return null;
         HashMap<String, Object> map = new HashMap<>(2);
         map.put("total", total);
-        map.put("items", userActivityPage.getRecords());
+        map.put("items", res);
         return map;
     }
 }

@@ -27,4 +27,5 @@ public interface PartyUserActivityService extends IService<PartyUserActivity> {
     boolean participate(String activityId, String userId);
 
     HashMap<String, Object> query(String userId, String activityId, Integer status, String branchId, String groupId, Integer page, Integer size);
+
 }

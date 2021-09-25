@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +32,10 @@ import java.util.List;
 @RequestMapping("/activities/{activityId}/users")
 public class PartyUserActivityController {
 
-    @Autowired
+    @Resource
     PartyUserActivityService userActivityService;
 
-    @Autowired
+    @Resource
     RedisTemplate redisTemplate;
 
     /**
@@ -50,19 +51,17 @@ public class PartyUserActivityController {
     @PostMapping("/add")
     public Result addUsers(@RequestBody List<String> userIds, @PathVariable("activityId") String activityId,
                            @RequestParam("branchId") String branchId, @RequestParam("groupId") String groupId) {
-        if (userActivityService.addUsers(userIds, activityId, branchId, groupId))
-            return Result.ok();
+        if (userActivityService.addUsers(userIds, activityId, branchId, groupId)) return Result.ok();
         return Result.error().message("添加失败");
     }
 
     @ApiOperation("按条件分页查询")
     @GetMapping("")
-    public Result query(@RequestParam(value = "user_id", required = false) String userId, @RequestParam(value = "activity_id", required = false) String activityId,
+    public Result query(@RequestParam(value = "user_id", required = false) String userId, @PathVariable String activityId,
                         @RequestParam(value = "status", required = false) Integer status, @RequestParam(value = "branchId", required = false) String branchId,
                         @RequestParam(value = "groupId", required = false) String groupId, @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         HashMap<String, Object> map = userActivityService.query(userId, activityId, status, branchId, groupId, page, size);
-        if (map != null)
-            return Result.ok().data("list", map);
+        if (map != null) return Result.ok().data("list", map);
         return Result.error().message("暂无数据");
     }
 
@@ -70,8 +69,7 @@ public class PartyUserActivityController {
     @GetMapping("/query-by-activityId")
     public Result queryAllUser(@PathVariable("activityId") String activityId) {
         List<UserEntity> list = userActivityService.getAllUser(activityId);
-        if (list != null)
-            return Result.ok().data("items", list);
+        if (list != null) return Result.ok().data("items", list);
         return Result.error().message("无用户");
     }
 
@@ -83,8 +81,7 @@ public class PartyUserActivityController {
     })
     @PostMapping("/{userId}/leave")
     public Result leave(@PathVariable("activityId") String activityId, @PathVariable("userId") String userId, @RequestParam(value = "reason", required = false) String reason) {
-        if (userActivityService.leave(activityId, userId, reason))
-            return Result.ok();
+        if (userActivityService.leave(activityId, userId, reason)) return Result.ok();
         return Result.error().message("请假失败");
     }
 
@@ -95,11 +92,9 @@ public class PartyUserActivityController {
     })
     @PostMapping("/{userId}/participate")
     public Result participate(@PathVariable("activityId") String activityId, @PathVariable("userId") String userId) {
-        if (userActivityService.participate(activityId, userId))
-            return Result.ok();
+        if (userActivityService.participate(activityId, userId)) return Result.ok();
         return Result.error().message("参与失败");
     }
-
 
 }
 
