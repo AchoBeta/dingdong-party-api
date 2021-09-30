@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * @author retraci
+ */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="用户活动", description="")

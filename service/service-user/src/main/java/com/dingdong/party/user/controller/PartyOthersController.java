@@ -43,16 +43,18 @@ public class PartyOthersController {
     @ApiOperation("修改最高期数")
     @PutMapping("/max-periods/{id}")
     public Result updatePeriodsNum(@PathVariable String id, Integer periodsNum) {
-        if (stageService.updatePeriodsNum(id, periodsNum))
+        if (stageService.updatePeriodsNum(id, periodsNum)) {
             return Result.ok().message("修改成功");
+        }
         return Result.error().message("修改失败");
     }
 
     @ApiOperation("修改最高年级")
     @PutMapping("/max-grade/{id}")
     public Result updateGradeNum(@PathVariable String id, Integer gradeNum) {
-        if (stageService.updateGradeNum(id, gradeNum))
+        if (stageService.updateGradeNum(id, gradeNum)) {
             return Result.ok().message("修改成功");
+        }
         return Result.error().message("修改失败");
     }
 
@@ -60,8 +62,9 @@ public class PartyOthersController {
     @GetMapping("/count")
     public Result queryStageCount() {
         List<StageCountEntity> list = stageService.queryStageCount();
-        if (list != null)
+        if (list != null) {
             return Result.ok().data("items", list);
+        }
         return Result.error().message("获取失败");
     }
 

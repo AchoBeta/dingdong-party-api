@@ -7,16 +7,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
+import javax.annotation.Resource;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author testjava
@@ -27,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/branches")
 public class PartyBranchController {
 
-    @Autowired
+    @Resource
     PartyBranchService branchService;
 
     @ApiOperation("根据党支部id查询")
@@ -37,8 +35,9 @@ public class PartyBranchController {
     @GetMapping("/{id}")
     public Result queryById(@PathVariable String id) {
         PartyBranch branch = branchService.getById(id);
-        if (branch != null)
+        if (branch != null) {
             return Result.ok().data("item", branch);
+        }
         return Result.error().message("查询失败");
     }
 
@@ -55,16 +54,18 @@ public class PartyBranchController {
                         @RequestParam(value = "directorName", required = false) String directorName, @RequestParam("page") Integer page,
                         @RequestParam("size") Integer size) {
         Map<Object, Object> map = branchService.getList(name, parentId, parentName, directorId, directorName, page, size);
-        if (map != null)
+        if (map != null) {
             return Result.ok().data("list", map);
+        }
         return Result.error().message("查询失败");
     }
 
     @ApiOperation("创建党支部")
     @PostMapping("")
     public Result create(@RequestBody PartyBranch branch) {
-        if (branchService.save(branch))
+        if (branchService.save(branch)) {
             return Result.ok().data("id", branch.getId());
+        }
         return Result.error().message("创建失败");
     }
 
@@ -74,8 +75,9 @@ public class PartyBranchController {
     })
     @DeleteMapping("/{id}")
     public Result remove(@PathVariable String id) {
-        if (branchService.removeById(id))
+        if (branchService.removeById(id)) {
             return Result.ok();
+        }
         return Result.error().message("删除失败");
     }
 
@@ -86,8 +88,9 @@ public class PartyBranchController {
     @PutMapping("/{id}")
     public Result update(@PathVariable String id, @RequestBody PartyBranch branch) {
         branch.setId(id);
-        if (branchService.updateById(branch))
+        if (branchService.updateById(branch)) {
             return Result.ok().data("id", id);
+        }
         return Result.error().message("修改失败");
     }
 }

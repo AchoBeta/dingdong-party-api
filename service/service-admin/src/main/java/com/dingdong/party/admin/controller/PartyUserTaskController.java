@@ -8,7 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +27,7 @@ import java.util.Date;
 @RequestMapping("/tasks")
 public class PartyUserTaskController extends BaseController {
 
-    @Autowired
+    @Resource
     WXService wxService;
 
     @GetMapping("/a")
@@ -36,7 +36,7 @@ public class PartyUserTaskController extends BaseController {
         return Result.ok();
     }
 
-    @Autowired
+    @Resource
     PartyUserTaskService userTaskService;
 
     @ApiOperation("用户批量进入下一任务")

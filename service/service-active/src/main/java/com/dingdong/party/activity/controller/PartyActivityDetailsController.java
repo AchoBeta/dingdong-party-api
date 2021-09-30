@@ -7,7 +7,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +38,9 @@ public class PartyActivityDetailsController {
     })
     public Result queryByActivityId(@PathVariable String activityId) {
         PartyActivityDetails details = detailsService.getById(activityId);
-        if (details != null) return Result.ok().data("item", details);
+        if (details != null) {
+            return Result.ok().data("item", details);
+        }
         return Result.error().message("获取失败");
     }
 

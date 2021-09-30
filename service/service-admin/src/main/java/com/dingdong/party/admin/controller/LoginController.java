@@ -4,13 +4,12 @@ import com.dingdong.party.admin.service.WXService;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -20,19 +19,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author retraci
+ */
 @Api(tags = "登录逻辑")
 @RequestMapping("")
 @RestController
 public class LoginController {
 
-    // 验证码
-    @Autowired
+    /**
+     *  验证码
+     */
+    @Resource
     private DefaultKaptcha defaultKaptcha;
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
-    @Autowired
+    @Resource
     private WXService wxService;
 
     @ApiOperation("获取图像验证码")

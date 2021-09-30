@@ -6,11 +6,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
+/**
+ * @author retraci
+ */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="ActivityDetailsEntity", description="")
@@ -58,6 +59,9 @@ public class ActivityDetailsEntity {
 
     @ApiModelProperty(value = "截至时间", required = true)
     private String endTime;
+
+    @ApiModelProperty(value = "报名截至时间", required = true)
+    private Date registrationEndTime;
 
     @ApiModelProperty(value = "内容", required = true)
     private String content;

@@ -20,6 +20,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author retraci
+ */
 @Component
 public class SwaggerAddtion implements ApiListingScannerPlugin {
     /**
@@ -36,8 +39,10 @@ public class SwaggerAddtion implements ApiListingScannerPlugin {
                 .method(HttpMethod.POST)
                 .summary("用户名密码登录")
                 .notes("username/password登录")
-                .consumes(Sets.newHashSet(MediaType.APPLICATION_FORM_URLENCODED_VALUE)) // 接收参数格式
-                .produces(Sets.newHashSet(MediaType.APPLICATION_JSON_VALUE)) // 返回参数格式
+                // 接收参数格式
+                .consumes(Sets.newHashSet(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                // 返回参数格式
+                .produces(Sets.newHashSet(MediaType.APPLICATION_JSON_VALUE))
                 .tags(Sets.newHashSet("登录"))
                 .parameters(Arrays.asList(
                         new ParameterBuilder()
@@ -90,8 +95,8 @@ public class SwaggerAddtion implements ApiListingScannerPlugin {
                 .build();
 
         ApiDescription loginApiDescription = new ApiDescription("login", "/login", "登录接口",
-                Arrays.asList(usernamePasswordOperation), false);
-        ApiDescription logoutApiDescription = new ApiDescription("logout", "/logout", "登出接口", Arrays.asList(logout), false);
+                Collections.singletonList(usernamePasswordOperation), false);
+        ApiDescription logoutApiDescription = new ApiDescription("logout", "/logout", "登出接口", Collections.singletonList(logout), false);
 
         return Arrays.asList(loginApiDescription, logoutApiDescription);
     }

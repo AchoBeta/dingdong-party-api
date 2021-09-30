@@ -7,6 +7,9 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
+/**
+ * @author retraci
+ */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="CommentEntity对象", description="")

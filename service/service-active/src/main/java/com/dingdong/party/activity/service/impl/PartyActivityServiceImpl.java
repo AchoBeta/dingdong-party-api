@@ -11,7 +11,7 @@ import com.dingdong.party.activity.service.PartyActivityService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.page.PageMethod;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -66,7 +66,9 @@ public class PartyActivityServiceImpl extends ServiceImpl<PartyActivityMapper, P
 //        this.page(activityPage, wrapper);
 
         long total = res.size();
-        if (total == 0) return null;
+        if (total == 0) {
+            return null;
+        }
         HashMap<Object, Object> map = new HashMap<>(2);
         map.put("total", total);
         map.put("items", res);
@@ -77,20 +79,22 @@ public class PartyActivityServiceImpl extends ServiceImpl<PartyActivityMapper, P
     public String create(ActivityDetailsEntity activityDetailsEntity) throws Exception {
         PartyActivity activity = new PartyActivity();
         BeanUtils.copyProperties(activityDetailsEntity, activity);
-        if (!this.save(activity)) throw new Exception("创建活动异常");
+        if (!this.save(activity)) {
+            throw new Exception("创建活动异常");
+        }
 
         PartyActivityDetails details = new PartyActivityDetails();
         BeanUtils.copyProperties(activityDetailsEntity, details);
         details.setId(activity.getId());
-        if (!detailsService.save(details)) throw new Exception("创建活动细节异常");
+        if (!detailsService.save(details)) {
+            throw new Exception("创建活动细节异常");
+        }
 
         return activity.getId();
     }
 
     /**
      * 删除活动
-     * @param id
-     * @return
      */
     @Override
     public boolean deleteById(String id) {
@@ -105,18 +109,20 @@ public class PartyActivityServiceImpl extends ServiceImpl<PartyActivityMapper, P
 
     /**
      * 修改活动
-     * @param detailsEntity
-     * @return
      */
     @Override
     public boolean modify(ActivityDetailsEntity detailsEntity) {
         PartyActivity activity = new PartyActivity();
         BeanUtils.copyProperties(detailsEntity, activity);
-        if (!this.updateById(activity)) throw new RuntimeException("修改失败");
+        if (!this.updateById(activity)) {
+            throw new RuntimeException("修改失败");
+        }
 
         PartyActivityDetails details = new PartyActivityDetails();
         BeanUtils.copyProperties(detailsEntity, details);
-        if (!detailsService.updateById(details)) throw new RuntimeException("需改失败");
+        if (!detailsService.updateById(details)) {
+            throw new RuntimeException("需改失败");
+        }
 
         return true;
     }
@@ -126,7 +132,9 @@ public class PartyActivityServiceImpl extends ServiceImpl<PartyActivityMapper, P
         return activityMapper.commit(activityId);
     }
 
-    // 小程序端查看所有活动
+    /**
+     * 小程序端查看所有活动
+     */
     @Override
     public Map<String, Object> queryAll(Integer page, Integer size) {
         QueryWrapper<PartyActivity> wrapper = new QueryWrapper<>();
@@ -136,7 +144,9 @@ public class PartyActivityServiceImpl extends ServiceImpl<PartyActivityMapper, P
 
         this.page(activityPage, wrapper);
         long total = activityPage.getTotal();
-        if (total == 0) return null;
+        if (total == 0) {
+            return null;
+        }
         HashMap<String, Object> map = new HashMap<>();
         map.put("total", total);
         map.put("items", activityPage.getRecords());

@@ -1,22 +1,17 @@
 package com.dingdong.party.activity.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dingdong.party.activity.entity.PartyActivity;
 import com.dingdong.party.activity.entity.PartyUserActivity;
 import com.dingdong.party.activity.entity.vo.UserEntity;
 import com.dingdong.party.activity.mapper.PartyActivityMapper;
 import com.dingdong.party.activity.mapper.PartyUserActivityMapper;
-import com.dingdong.party.activity.service.PartyActivityService;
 import com.dingdong.party.activity.service.PartyUserActivityService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.page.PageMethod;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +28,13 @@ import java.util.Map;
 public class PartyUserActivityServiceImpl extends ServiceImpl<PartyUserActivityMapper, PartyUserActivity> implements PartyUserActivityService {
 
     @Resource
-    PartyUserActivityMapper userActivityMapper;
+    private PartyUserActivityMapper userActivityMapper;
 
     @Resource
-    PartyActivityMapper partyActivityMapper;
+    private PartyActivityMapper partyActivityMapper;
+
+    @Resource
+    private PartyActivityServiceImpl partyActivityService;
 
     @Override
     public boolean addUsers(List<String> userIds, String activityId, String branchId, String groupId) {
@@ -46,8 +44,9 @@ public class PartyUserActivityServiceImpl extends ServiceImpl<PartyUserActivityM
             partyUserActivity.setUserId(userId);
             partyUserActivity.setBranchId(branchId);
             partyUserActivity.setGroupId(groupId);
-            if (!this.save(partyUserActivity))
+            if (!this.save(partyUserActivity)) {
                 return false;
+            }
             partyUserActivity.setId(null);
         }
         UpdateWrapper<PartyActivity> wrapper = new UpdateWrapper<>();
@@ -70,6 +69,15 @@ public class PartyUserActivityServiceImpl extends ServiceImpl<PartyUserActivityM
 
     @Override
     public boolean participate(String activityId, String userId) {
+        PartyActivity activity = partyActivityService.getById(activityId);
+        if (activity == null) {
+            throw new RuntimeException("活动不存在");
+        }
+
+        if (System.currentTimeMillis() > activity.getRegistrationEndTime().getTime()) {
+            throw new RuntimeException("活动报名已截止");
+        }
+
         PartyUserActivity userActivity = new PartyUserActivity();
         userActivity.setUserId(userId).setActivityId(activityId).setStatus(4);
         return this.save(userActivity);
@@ -99,7 +107,9 @@ public class PartyUserActivityServiceImpl extends ServiceImpl<PartyUserActivityM
 //        this.page(userActivityPage, wrapper);
 
         long total = res.size();
-        if (total == 0) return null;
+        if (total == 0) {
+            return null;
+        }
         HashMap<String, Object> map = new HashMap<>(2);
         map.put("total", total);
         map.put("items", res);

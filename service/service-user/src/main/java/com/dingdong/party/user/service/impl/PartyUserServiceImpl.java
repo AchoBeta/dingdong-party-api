@@ -15,7 +15,7 @@ import com.dingdong.party.user.service.PartyTeacherService;
 import com.dingdong.party.user.service.PartyUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -39,10 +39,10 @@ public class PartyUserServiceImpl extends ServiceImpl<PartyUserMapper, PartyUser
     @Resource
     PartyUserMapper userMapper;
 
-    @Autowired
+    @Resource
     PartyStudentService studentService;
 
-    @Autowired
+    @Resource
     PartyTeacherService teacherService;
 
     @Override

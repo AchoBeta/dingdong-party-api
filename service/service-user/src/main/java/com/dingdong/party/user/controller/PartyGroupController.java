@@ -1,6 +1,5 @@
 package com.dingdong.party.user.controller;
 
-
 import com.dingdong.party.commonUtils.result.Result;
 import com.dingdong.party.user.entity.PartyGroup;
 import com.dingdong.party.user.service.PartyGroupService;
@@ -8,15 +7,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author testjava
@@ -27,7 +25,7 @@ import java.util.Map;
 @RequestMapping("/branch/{branchId}/groups")
 public class PartyGroupController {
 
-    @Autowired
+    @Resource
     PartyGroupService groupService;
 
     @ApiOperation("根据党组id查询")
@@ -57,8 +55,9 @@ public class PartyGroupController {
                         @RequestParam(value = "directorName", required = false) String directorName, @RequestParam("page") Integer page,
                         @RequestParam("size") Integer size) {
         Map<Object, Object> map = groupService.getList(name, branchId, branchName, directorId, directorName, page, size);
-        if (map != null)
+        if (map != null) {
             return Result.ok().data("list", map);
+        }
         return Result.error().message("查询失败");
     }
 
@@ -69,8 +68,9 @@ public class PartyGroupController {
     @PostMapping("")
     public Result create(@PathVariable("branchId") String branchId, @RequestBody PartyGroup group) {
         group.setBranchId(branchId);
-        if (groupService.save(group))
+        if (groupService.save(group)) {
             return Result.ok().data("id", group.getId());
+        }
         return Result.error().message("创建失败");
     }
 
@@ -81,8 +81,9 @@ public class PartyGroupController {
     })
     @DeleteMapping("/{id}")
     public Result remove(@PathVariable("branchId") String branchId, @PathVariable("id") String id) {
-        if (groupService.removeById(id))
+        if (groupService.removeById(id)) {
             return Result.ok();
+        }
         return Result.error().message("删除失败");
     }
 
@@ -95,8 +96,9 @@ public class PartyGroupController {
     public Result update(@PathVariable("branchId") String branchId, @PathVariable("id") String id, @RequestBody PartyGroup group) {
         group.setBranchId(branchId);
         group.setId(id);
-        if (groupService.updateById(group))
+        if (groupService.updateById(group)) {
             return Result.ok().data("id", id);
+        }
         return Result.error().message("修改失败");
     }
 }

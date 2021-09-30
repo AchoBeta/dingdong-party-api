@@ -9,9 +9,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -26,8 +26,10 @@ import java.util.Map;
 @Api(tags = "学生管理")
 @RequestMapping("/students")
 public class PartyStudentController {
-    @Autowired
+
+    @Resource
     PartyStudentService studentService;
+
     @ApiOperation(value = "根据学号查学生")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "studentNo", value = "学号", type = "String", required = true)
@@ -65,8 +67,6 @@ public class PartyStudentController {
 
     /**
      * 创建学生
-     * @param studentEntity
-     * @return
      */
     @PostMapping("")
     @ApiOperation("创建学生")
@@ -81,8 +81,6 @@ public class PartyStudentController {
 
     /**
      * 更新学生
-     * @param studentId
-     * @return
      */
     @PutMapping("/{studentId}")
     @ApiOperation("修改学生")
@@ -101,8 +99,6 @@ public class PartyStudentController {
 
     /**
      * 删除学生
-     * @param studentNo
-     * @return
      */
     @ApiOperation("删除学生")
     @ApiImplicitParams({

@@ -5,6 +5,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * @author retraci
+ */
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="UserActivityEntity", description="")

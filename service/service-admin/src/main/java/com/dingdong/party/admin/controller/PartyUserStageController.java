@@ -8,7 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +35,7 @@ import java.util.Date;
 @Api(tags = "阶段管理")
 public class PartyUserStageController extends BaseController {
 
-    @Autowired
+    @Resource
     PartyUserStageService userStageService;
 
     @ApiOperation("批量修改阶段")

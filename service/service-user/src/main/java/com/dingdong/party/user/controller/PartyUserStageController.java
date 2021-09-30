@@ -7,9 +7,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequestMapping("/user-stages")
 public class PartyUserStageController {
 
-    @Autowired
+    @Resource
     PartyUserStageService userStageService;
 
     @ApiOperation("按 id 查询用户阶段信息")
@@ -35,8 +35,9 @@ public class PartyUserStageController {
     @GetMapping("/{id}")
     public Result queryById(@PathVariable("id") String id) {
         PartyUserStage userStage = userStageService.getById(id);
-        if (userStage != null)
+        if (userStage != null) {
             return Result.ok().data("item", userStage);
+        }
         return Result.error().message("用户阶段信息查询失败");
     }
 
@@ -49,16 +50,18 @@ public class PartyUserStageController {
     public Result query(@RequestParam(value = "userId", required = false) String userId, @RequestParam(value = "stage_id", required = false) Integer stageId,
                         @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
          Map<String, Object> map = userStageService.getList(userId, stageId, page, size);
-         if (map != null)
+         if (map != null) {
              return Result.ok().data("list", map);
+         }
          return Result.error().message("查询失败");
     }
 
     @ApiOperation("创建用户阶段信息")
     @PostMapping("")
     public Result create(@RequestBody PartyUserStage userStage) {
-        if (userStageService.save(userStage))
+        if (userStageService.save(userStage)) {
             return Result.ok().data("id", userStage.getId());
+        }
         return Result.error().message("创建失败");
     }
 
@@ -66,16 +69,18 @@ public class PartyUserStageController {
     @PutMapping("/{id}")
     public Result update(@RequestBody PartyUserStage userStage, @PathVariable("id") String id) {
         userStage.setId(id);
-        if (userStageService.updateById(userStage))
+        if (userStageService.updateById(userStage)) {
             return Result.ok();
+        }
         return Result.error().message("更新失败");
     }
 
     @ApiOperation("删除用户信息")
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable("id") String id) {
-        if (userStageService.removeById(id))
+        if (userStageService.removeById(id)) {
             return Result.ok();
+        }
         return Result.error().message("删除失败");
     }
 }

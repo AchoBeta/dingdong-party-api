@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dingdong.party.admin.service.PartyAdminService;
 import com.dingdong.party.commonUtils.utils.MD5;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class PartyAdminServiceImpl extends ServiceImpl<PartyAdminMapper, PartyAdmin> implements PartyAdminService {
 
-    @Autowired
+    @Resource
     PartyAdminMapper adminMapper;
 
     ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2);  // 创建定时器线程，线程数为当前核心数的两倍

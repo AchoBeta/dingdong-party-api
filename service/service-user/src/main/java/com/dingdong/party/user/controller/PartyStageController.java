@@ -8,10 +8,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -27,14 +26,11 @@ import java.util.List;
 @RequestMapping("/stages")
 public class PartyStageController {
 
-    @Autowired
+    @Resource
     PartyStageService partyStageService;
 
-    @Autowired
+    @Resource
     PartyTaskService taskService;
-
-    @Autowired
-    RedisTemplate redisTemplate;
 
     @ApiOperation("根据id查询入党阶段")
     @ApiImplicitParams({
@@ -64,8 +60,9 @@ public class PartyStageController {
             @ApiImplicitParam(name = "id", value = "入党阶段id", type = "String", required = true)
     })
     public Result delete(@PathVariable String id) {
-        if (partyStageService.removeById(id))
+        if (partyStageService.removeById(id)) {
             return Result.ok();
+        }
         return Result.error().message("删除失败");
     }
 
@@ -76,8 +73,9 @@ public class PartyStageController {
     })
     public Result update(@PathVariable("id") Integer id, @RequestBody PartyStage stage) {
         stage.setId(id);
-        if (partyStageService.updateById(stage))
+        if (partyStageService.updateById(stage)) {
             return Result.ok();
+        }
         return Result.error().message("更新失败");
     }
 
@@ -85,8 +83,9 @@ public class PartyStageController {
     @GetMapping("")
     public Result queryAllStageAndTask() {
         List<PartyStage> list = partyStageService.queryAllStageAndTask();
-        if (list != null)
+        if (list != null) {
             return Result.ok().data("items", list);
+        }
         return Result.error().message("获取失败");
     }
 

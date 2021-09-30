@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author testjava
@@ -70,6 +70,9 @@ public class PartyActivity implements Serializable {
 
     @ApiModelProperty(value = "截至时间", required = true)
     private Date endTime;
+
+    @ApiModelProperty(value = "报名截至时间", required = true)
+    private Date registrationEndTime;
 
     @ApiModelProperty(value = "状态(0:草稿 1:未审批 2:被驳回 3:已审批  4:可参与)", required = true)
     private Integer status;

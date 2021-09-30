@@ -25,15 +25,18 @@ public class PartyActivityExperienceServiceImpl extends ServiceImpl<PartyActivit
     @Override
     public Map<Object, Object> getList(String activityId, String userId, Integer page, Integer size) {
         QueryWrapper<PartyActivityExperience> wrapper = new QueryWrapper<>();
-        if (activityId != null)
+        if (activityId != null) {
             wrapper.eq("activity_id", activityId);
-        if (userId != null)
+        }
+        if (userId != null) {
             wrapper.eq("user_id", userId);
+        }
         Page<PartyActivityExperience> experiencePage = new Page<>(page, size);
         this.page(experiencePage, wrapper);
         long total = experiencePage.getTotal();
-        if (total == 0)
+        if (total == 0) {
             return null;
+        }
         HashMap<Object, Object> map = new HashMap<>(2);
         map.put("total", total);
         map.put("items", experiencePage.getRecords());

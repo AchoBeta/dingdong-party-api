@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +29,7 @@ import java.util.Map;
 @RequestMapping("/admins")
 public class PartyAdminController extends BaseController {
 
-    @Autowired
+    @Resource
     PartyAdminService adminService;
 
 

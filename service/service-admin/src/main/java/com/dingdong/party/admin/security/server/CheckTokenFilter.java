@@ -26,6 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * @author retraci
+ */
 @Slf4j
 @Component("checkTokenFilter")
 public class CheckTokenFilter extends OncePerRequestFilter {
@@ -39,7 +42,7 @@ public class CheckTokenFilter extends OncePerRequestFilter {
     private AuthenticationFailHandlerImpl loginFailureHandler;
 
     @Resource
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Resource
     private JwtUtils jwtUtils;
@@ -50,59 +53,67 @@ public class CheckTokenFilter extends OncePerRequestFilter {
         response.setContentType("text/json;charset=utf-8");
         if (url.equals(loginUrl)) {
             try {
-                if (!validate(request, response))
+                if (!validate(request, response)) {
                     return;
+                }
             } catch (AuthenticationException e) {
                 loginFailureHandler.onAuthenticationFailure(request, response, e);
                 return;
             }
         } else {
-            //验证token,验证码请求不需要验证token
+            // 验证token,验证码请求不需要验证token
             if (url.contains("swagger") || url.contains("v2") || url.contains("webjars") || url.contains("favicon") || url.contains("doc.html")) {
                 filterChain.doFilter(request, response);
                 return;
             }
             if (!url.contains(imageCodeUrl)) {
-                if (!validateToken(request, response))
+                if (!validateToken(request, response)) {
                     return;
+                }
             }
         }
         filterChain.doFilter(request, response);
     }
 
-    //验证token
+    /**
+     * 验证token
+     */
     private boolean validateToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //获取前端传来的token
+        // 获取前端传来的token
         String token = request.getHeader("token");
-        //解析token，获取用户名
+        // 解析token，获取用户名
         String username = jwtUtils.getUsernameFromToken(token);
         //如果token或者用户名为空的话，不能通过认证
         if (StringUtils.isBlank(token) || StringUtils.isBlank(username)) {
             response.getWriter().write(new ObjectMapper().writeValueAsString(new Result().code(4001).message("token验证失败，请重新登录！")));
             return false;
         }
-        String details = (String) redisTemplate.opsForValue().get("admin:" + username);     // 登录时通过缓存拿到账户信息，保存此状态
+        // 登录时通过缓存拿到账户信息，保存此状态
+        String details = (String) redisTemplate.opsForValue().get("admin:" + username);
 
         AdminEntity userDetails = JSONObject.parseObject(details, AdminEntity.class);
         if (userDetails == null) {
             response.getWriter().write(new ObjectMapper().writeValueAsString(new Result().code(4001).message("token验证失败，请重新登录！")));
             return false;
         }
-        ArrayList<GrantedAuthority> list = new ArrayList<>();        // 需要改进，缓存中也需携带权限信息
+        // 需要改进，缓存中也需携带权限信息
+        ArrayList<GrantedAuthority> list = new ArrayList<>();
         list.add(new SimpleGrantedAuthority("admin"));
         userDetails.setPermissions(list);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        //设置为已登录
+        // 设置为已登录
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return true;
     }
 
-    //验证验证码
+    /**
+     * 验证验证码
+     */
     private boolean validate(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //1.获取登录请求的验证码
+        // 1.获取登录请求的验证码
         String inputCode = request.getParameter("code");
-        //2.判断验证码是否为空
+        // 2.判断验证码是否为空
         if (StringUtils.isBlank(inputCode)) {
             response.getWriter().write(new ObjectMapper().writeValueAsString(new Result().code(4001).message("验证码不能为空!")));
             return false;

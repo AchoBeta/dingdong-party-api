@@ -7,14 +7,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Resource;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author testjava
@@ -25,7 +27,7 @@ import java.util.Map;
 @RequestMapping("/user-tasks")
 public class PartyUserTaskController {
 
-    @Autowired
+    @Resource
     PartyUserTaskService userTaskService;
 
     @ApiOperation("按 id 查询用户阶段信息")
@@ -35,8 +37,9 @@ public class PartyUserTaskController {
     @GetMapping("/{id}")
     public Result queryById(@PathVariable("id") String id) {
         PartyUserTask userTask = userTaskService.getById(id);
-        if (userTask != null)
+        if (userTask != null) {
             return Result.ok().data("item", userTask);
+        }
         return Result.error().message("用户阶段信息查询失败");
     }
 
@@ -49,16 +52,18 @@ public class PartyUserTaskController {
     public Result query(@RequestParam(value = "userId", required = false) String userId, @RequestParam(value = "task_id", required = false) Integer taskId,
                         @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Map<String, Object> map = userTaskService.getList(userId, taskId, page, size);
-        if (map != null)
+        if (map != null) {
             return Result.ok().data("list", map);
+        }
         return Result.error().message("查询失败");
     }
 
     @ApiOperation("创建用户阶段信息")
     @PostMapping("")
     public Result create(@RequestBody PartyUserTask userTask) {
-        if (userTaskService.save(userTask))
+        if (userTaskService.save(userTask)) {
             return Result.ok().data("id", userTask.getId());
+        }
         return Result.error().message("创建失败");
     }
 
@@ -66,16 +71,18 @@ public class PartyUserTaskController {
     @PutMapping("/{id}")
     public Result update(@RequestBody PartyUserTask userTask, @PathVariable("id") String id) {
         userTask.setId(id);
-        if (userTaskService.updateById(userTask))
+        if (userTaskService.updateById(userTask)) {
             return Result.ok();
+        }
         return Result.error().message("更新失败");
     }
 
     @ApiOperation("删除用户信息")
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable("id") String id) {
-        if (userTaskService.removeById(id))
+        if (userTaskService.removeById(id)) {
             return Result.ok();
+        }
         return Result.error().message("删除失败");
     }
 }

@@ -9,14 +9,14 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author testjava
@@ -27,7 +27,7 @@ import java.util.Map;
 @RequestMapping("/instructors")
 public class PartyTeacherController {
 
-    @Autowired
+    @Resource
     PartyTeacherService teacherService;
 
     @ApiOperation("根据id查询老师")
@@ -53,13 +53,14 @@ public class PartyTeacherController {
             @ApiImplicitParam(name = "page", value = "页号", type = "int"), @ApiImplicitParam(name = "size", value = "大小", type = "int")
     })
     @GetMapping("")
-    public Result query(@RequestParam(value = "name",required = false) String name, @RequestParam(value = "groupId", required = false) String groupId,
-                        @RequestParam(value = "groupName",required = false) String groupName, @RequestParam(value = "branchId", required = false) String branchId,
+    public Result query(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "groupId", required = false) String groupId,
+                        @RequestParam(value = "groupName", required = false) String groupName, @RequestParam(value = "branchId", required = false) String branchId,
                         @RequestParam(value = "branchName", required = false) String branchName, @RequestParam(value = "partyPosition", required = false) String partyPosition,
                         @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Map<Object, Object> map = teacherService.getList(name, groupId, groupName, branchId, branchName, partyPosition, page, size);
-        if (map != null)
+        if (map != null) {
             return Result.ok().data("list", map);
+        }
         return Result.error().message("查询失败");
     }
 
@@ -68,8 +69,9 @@ public class PartyTeacherController {
     public Result create(@RequestBody TeacherEntity teacherEntity) {
         PartyTeacher teacher = new PartyTeacher();
         BeanUtils.copyProperties(teacherEntity, teacher);
-        if (teacherService.save(teacher))
+        if (teacherService.save(teacher)) {
             return Result.ok().data("id", teacher.getTeacherId());
+        }
         return Result.error().message("增加失败");
     }
 
@@ -82,8 +84,9 @@ public class PartyTeacherController {
         PartyTeacher teacher = new PartyTeacher();
         BeanUtils.copyProperties(teacherEntity, teacher);
         teacher.setTeacherId(id);
-        if (teacherService.updateById(teacher))
+        if (teacherService.updateById(teacher)) {
             return Result.ok().data("id", id);
+        }
         return Result.error().message("删除失败");
     }
 
@@ -93,8 +96,9 @@ public class PartyTeacherController {
     })
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable String id) {
-        if (teacherService.removeById(id))
+        if (teacherService.removeById(id)) {
             return Result.ok();
+        }
         return Result.error().message("删除失败");
     }
 

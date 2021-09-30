@@ -26,13 +26,15 @@ public class PartyActivityImageServiceImpl extends ServiceImpl<PartyActivityImag
     @Override
     public Map<Object, Object> getList(String activityId, Integer page, Integer size) {
         QueryWrapper<PartyActivityImage> wrapper = new QueryWrapper<>();
-        if (activityId != null)
+        if (activityId != null) {
             wrapper.eq("activity_id", activityId);
+        }
         Page<PartyActivityImage> imagePage = new Page<>(page, size);
         this.page(imagePage, wrapper);
         long total = imagePage.getTotal();
-        if (total == 0)
+        if (total == 0) {
             return null;
+        }
         HashMap<Object, Object> map = new HashMap<>(2);
         map.put("total", total);
         map.put("items", imagePage.getRecords());

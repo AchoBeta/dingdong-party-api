@@ -5,7 +5,7 @@ import com.dingdong.party.admin.entity.PartyUserTask;
 import com.dingdong.party.admin.mapper.PartyUserTaskMapper;
 import com.dingdong.party.admin.service.PartyUserTaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.List;
 @Service
 public class PartyUserTaskServiceImpl extends ServiceImpl<PartyUserTaskMapper, PartyUserTask> implements PartyUserTaskService {
 
-    @Autowired
+    @Resource
     PartyUserTaskMapper taskMapper;
 
     @Override

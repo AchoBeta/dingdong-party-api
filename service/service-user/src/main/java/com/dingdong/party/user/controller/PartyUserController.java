@@ -11,11 +11,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +35,11 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/users")
 public class PartyUserController {
 
-    @Autowired
+    @Resource
     PartyUserService userService;
 
-    @Autowired
-    RedisTemplate redisTemplate;
+    @Resource
+    RedisTemplate<String, Object> redisTemplate;
 
     JwtUtils jwtUtils = new JwtUtils();
 
@@ -82,8 +82,9 @@ public class PartyUserController {
                         @RequestParam(value = "major", required = false) String major,
                         @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         Map<String, Object> map = userService.getList(branchId, groupId, stageId, periodsNum, institute, grade, major, page, size);
-        if (map != null)
+        if (map != null) {
             return Result.ok().data("list", map);
+        }
         return Result.error().message("查询失败");
     }
 
@@ -91,8 +92,9 @@ public class PartyUserController {
     @ApiOperation("创建用户")
     @PostMapping("")
     public Result create(@RequestBody PartyUser user) {
-        if (userService.save(user))
+        if (userService.save(user)) {
             return Result.ok().data("id", user.getUserId());
+        }
         return Result.error().message("创建失败");
     }
 
@@ -102,8 +104,9 @@ public class PartyUserController {
     })
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable String id) {
-        if (userService.removeById(id))
+        if (userService.removeById(id)) {
             return Result.ok();
+        }
         return Result.error().message("删除失败");
     }
 
@@ -131,8 +134,9 @@ public class PartyUserController {
         String token = request.getHeader("token");
         String userId = (String) redisTemplate.opsForValue().get("user:" + token);
         Object info = userService.info(userId);
-        if (info != null)
+        if (info != null) {
             return Result.ok().data("item", info);
+        }
         return Result.error().message("查询失败");
     }
 
@@ -143,17 +147,19 @@ public class PartyUserController {
     @GetMapping("/{userId}/info")
     public Result info(@PathVariable String userId) {
         Map<String, Object> info = userService.info(userId);
-        if (info != null)
+        if (info != null) {
             return Result.ok().data("item", info);
+        }
         return Result.error().message("查询失败");
     }
 
     @ApiOperation("查看用户的评论")
     @GetMapping("/{userId}/{comments}")
-    public Result getComments(@PathVariable("userId") String userId) {
+    public Result getComments(@PathVariable String comments, @PathVariable("userId") String userId) {
         List<CommentEntity> list = userService.getComments(userId);
-        if (list != null)
+        if (list != null) {
             return Result.ok().data("items", list).data("total", list.size());
+        }
         return Result.error().message("暂无记录");
     }
 
@@ -167,8 +173,9 @@ public class PartyUserController {
     public Result getActivities(@PathVariable("userId") String userId, @RequestParam(value = "status", required = false) Integer status,
                                 @RequestParam(value = "activityId", required = false) String activityId) {
         Object list = userService.getActivities(userId, status, activityId);
-        if (list != null)
+        if (list != null) {
             return Result.ok().data("items", list);
+        }
         return Result.error().message("查询失败");
     }
 

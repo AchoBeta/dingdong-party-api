@@ -1,15 +1,13 @@
 package com.dingdong.party.activity.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dingdong.party.activity.entity.PartyActivityComment;
 import com.dingdong.party.activity.entity.vo.CommentEntity;
 import com.dingdong.party.activity.mapper.PartyActivityCommentMapper;
 import com.dingdong.party.activity.service.PartyActivityCommentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +23,7 @@ import java.util.Map;
 @Service
 public class PartyActivityCommentServiceImpl extends ServiceImpl<PartyActivityCommentMapper, PartyActivityComment> implements PartyActivityCommentService {
 
-    @Autowired
+    @Resource
     PartyActivityCommentMapper commentMapper;
 
     @Override
