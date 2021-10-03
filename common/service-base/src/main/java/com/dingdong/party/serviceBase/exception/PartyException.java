@@ -1,12 +1,17 @@
 package com.dingdong.party.serviceBase.exception;
 
-import com.dingdong.party.commonUtils.result.ResultCode;
+import com.dingdong.party.serviceBase.common.api.ResultCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * @author retraci
+ */
 @Data
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class PartyException extends RuntimeException {
 

@@ -1,7 +1,6 @@
 package com.dingdong.party.activity.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dingdong.party.activity.entity.PartyActivity;
 import com.dingdong.party.activity.entity.PartyActivityDetails;
 import com.dingdong.party.activity.entity.vo.ActivityDetailsEntity;
@@ -9,22 +8,23 @@ import com.dingdong.party.activity.mapper.PartyActivityMapper;
 import com.dingdong.party.activity.service.PartyActivityDetailsService;
 import com.dingdong.party.activity.service.PartyActivityService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.page.PageMethod;
+import com.dingdong.party.serviceBase.common.api.ResultCode;
+import com.dingdong.party.serviceBase.exception.PartyException;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
-import javax.annotation.Resource;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
+
+import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-16
  */
 @Service
@@ -37,120 +37,120 @@ public class PartyActivityServiceImpl extends ServiceImpl<PartyActivityMapper, P
     PartyActivityMapper activityMapper;
 
     @Override
-    public Map<Object, Object> getList(String name, String branchId, String startTime, String endTime, String directorId, String directorName, Integer status, Integer page, Integer size) {
-        PageMethod.startPage(page, size);
-        List<Map<Object, Object>> res = activityMapper.getList(name, branchId, startTime, endTime, directorId, directorName, status);
+    public List<PartyActivity> getList(String name, String branchId, String startTime, String endTime, String directorId, String directorName, Integer status, Integer page, Integer size) {
+        PageHelper.startPage(page, size);
 
-//        QueryWrapper<PartyActivity> wrapper = new QueryWrapper<>();
-//        if (name != null)
-//            wrapper.like("name", name);
-//        if (groupId != null)
-//            wrapper.eq("group_id", groupId);
-//        if (branchId != null)
-//            wrapper.eq("branch_id", branchId);
-//        if (startTime != null)
-//            wrapper.ge("start_time", startTime);
-//        if (endTime != null)
-//            wrapper.le("end_time", endTime);
-//        if (startTime != null && endTime != null) {
-//            wrapper.ge("end_time", startTime);
-//            wrapper.le("start_time", endTime);
-//        }
-//        if (directorId != null)
-//            wrapper.eq("director_id", directorId);
-//        if (directorName != null)
-//            wrapper.like("director_name", directorName);
-//        if (status != null)
-//            wrapper.eq("status", status);
-//        Page<PartyActivity> activityPage = new Page<>(page, size);
-//        this.page(activityPage, wrapper);
-
-        long total = res.size();
-        if (total == 0) {
-            return null;
+        QueryWrapper<PartyActivity> wrapper = new QueryWrapper<>();
+        if (name != null) {
+            wrapper.like("name", name);
         }
-        HashMap<Object, Object> map = new HashMap<>(2);
-        map.put("total", total);
-        map.put("items", res);
-        return map;
+        if (branchId != null) {
+            wrapper.eq("branch_id", branchId);
+        }
+        if (startTime != null) {
+            wrapper.ge("start_time", startTime);
+        }
+        if (endTime != null) {
+            wrapper.le("end_time", endTime);
+        }
+        if (startTime != null && endTime != null) {
+            wrapper.ge("end_time", startTime);
+            wrapper.le("start_time", endTime);
+        }
+        if (directorId != null) {
+            wrapper.eq("director_id", directorId);
+        }
+        if (directorName != null) {
+            wrapper.like("director_name", directorName);
+        }
+        if (status != null) {
+            wrapper.eq("status", status);
+        }
+
+        List<PartyActivity> list = this.list(wrapper);
+        if (list.size() <= 0) {
+            throw new PartyException("暂无数据", ResultCode.COMMON_FAIL.getCode());
+        }
+
+        return list;
     }
 
     @Override
-    public String create(ActivityDetailsEntity activityDetailsEntity) throws Exception {
+    public void create(ActivityDetailsEntity activityDetailsEntity) {
         PartyActivity activity = new PartyActivity();
         BeanUtils.copyProperties(activityDetailsEntity, activity);
         if (!this.save(activity)) {
-            throw new Exception("创建活动异常");
+            throw new PartyException("创建活动异常", ResultCode.COMMON_FAIL.getCode());
         }
 
         PartyActivityDetails details = new PartyActivityDetails();
         BeanUtils.copyProperties(activityDetailsEntity, details);
         details.setId(activity.getId());
         if (!detailsService.save(details)) {
-            throw new Exception("创建活动细节异常");
+            throw new PartyException("创建活动细节异常", ResultCode.COMMON_FAIL.getCode());
         }
-
-        return activity.getId();
     }
 
-    /**
-     * 删除活动
-     */
     @Override
-    public boolean deleteById(String id) {
+    public void remove(String id) {
         try {
             this.removeById(id);
             detailsService.removeById(id);
-            return true;
         } catch (Exception e) {
-            throw new RuntimeException("删除失败");
+            throw new PartyException("删除失败", ResultCode.COMMON_FAIL.getCode());
         }
     }
 
-    /**
-     * 修改活动
-     */
     @Override
-    public boolean modify(ActivityDetailsEntity detailsEntity) {
+    public void update(String id, ActivityDetailsEntity detailsEntity) {
         PartyActivity activity = new PartyActivity();
         BeanUtils.copyProperties(detailsEntity, activity);
         if (!this.updateById(activity)) {
-            throw new RuntimeException("修改失败");
+            throw new PartyException("修改活动异常", ResultCode.COMMON_FAIL.getCode());
         }
 
         PartyActivityDetails details = new PartyActivityDetails();
         BeanUtils.copyProperties(detailsEntity, details);
         if (!detailsService.updateById(details)) {
-            throw new RuntimeException("需改失败");
+            throw new PartyException("修改活动细节异常", ResultCode.COMMON_FAIL.getCode());
         }
-
-        return true;
     }
 
+
     @Override
-    public boolean commit(String activityId) {
-        return activityMapper.commit(activityId);
+    public void commit(String activityId) {
+        boolean res = activityMapper.commit(activityId);
+        if (!res) {
+            throw new PartyException("提交失败", ResultCode.COMMON_FAIL.getCode());
+        }
     }
 
     /**
      * 小程序端查看所有活动
      */
     @Override
-    public Map<String, Object> queryAll(Integer page, Integer size) {
+    public List<PartyActivity> queryAll(Integer page, Integer size) {
+        PageHelper.startPage(page, size);
+
         QueryWrapper<PartyActivity> wrapper = new QueryWrapper<>();
         wrapper.ge("status", 3);
         wrapper.orderByAsc("status");
-        Page<PartyActivity> activityPage = new Page<>(page, size);
 
-        this.page(activityPage, wrapper);
-        long total = activityPage.getTotal();
-        if (total == 0) {
-            return null;
+        return this.list(wrapper);
+    }
+
+    @Override
+    public ActivityDetailsEntity queryById(String id) {
+        PartyActivity activity = this.getById(id);
+        PartyActivityDetails details = detailsService.getById(id);
+
+        if (activity == null || details == null) {
+            throw new PartyException("查询失败", ResultCode.COMMON_FAIL.getCode());
         }
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("total", total);
-        map.put("items", activityPage.getRecords());
 
-        return map;
+        ActivityDetailsEntity detailsEntity = new ActivityDetailsEntity();
+        BeanUtils.copyProperties(activity, detailsEntity);
+        BeanUtils.copyProperties(details, detailsEntity);
+        return detailsEntity;
     }
 }

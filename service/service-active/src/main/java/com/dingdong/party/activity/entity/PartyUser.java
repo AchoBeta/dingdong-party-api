@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
  *
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-17
  */
 @Data
@@ -56,6 +56,9 @@ public class PartyUser implements Serializable {
 
     @ApiModelProperty(value = "所属阶段")
     private Integer stageId;
+
+    @ApiModelProperty(value = "期数")
+    private Integer stage;
 
     @ApiModelProperty(value = "阶段任务")
     private Integer taskId;

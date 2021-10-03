@@ -1,23 +1,28 @@
 package com.dingdong.party.user.controller;
 
-import com.dingdong.party.commonUtils.result.Result;
+import com.dingdong.party.serviceBase.common.api.CommonItem;
+import com.dingdong.party.serviceBase.common.api.CommonList;
+import com.dingdong.party.serviceBase.common.api.CommonResult;
+import com.dingdong.party.serviceBase.common.api.Result;
 import com.dingdong.party.user.entity.PartyBranch;
+import com.dingdong.party.serviceBase.common.vo.IdVO;
 import com.dingdong.party.user.service.PartyBranchService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Map;
+import java.util.List;
 
 /**
  * <p>
  * 前端控制器
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-23
  */
 @RestController
@@ -33,12 +38,9 @@ public class PartyBranchController {
             @ApiImplicitParam(name = "id", value = "党支部id", type = "String", required = true)
     })
     @GetMapping("/{id}")
-    public Result queryById(@PathVariable String id) {
-        PartyBranch branch = branchService.getById(id);
-        if (branch != null) {
-            return Result.ok().data("item", branch);
-        }
-        return Result.error().message("查询失败");
+    public ResponseEntity<Result<CommonItem<PartyBranch>>> queryById(@PathVariable String id) {
+        PartyBranch branch = branchService.queryById(id);
+        return CommonResult.success(CommonItem.restItem(branch));
     }
 
     @ApiOperation("按条件分页查询党支部")
@@ -49,24 +51,19 @@ public class PartyBranchController {
             @ApiImplicitParam(name = "size", value = "大小", type = "int")
     })
     @GetMapping("")
-    public Result query(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "parentId", required = false) String parentId,
-                        @RequestParam(value = "parentName", required = false) String parentName, @RequestParam(value = "directorId", required = false) String directorId,
-                        @RequestParam(value = "directorName", required = false) String directorName, @RequestParam("page") Integer page,
-                        @RequestParam("size") Integer size) {
-        Map<Object, Object> map = branchService.getList(name, parentId, parentName, directorId, directorName, page, size);
-        if (map != null) {
-            return Result.ok().data("list", map);
-        }
-        return Result.error().message("查询失败");
+    public ResponseEntity<Result<CommonList<PartyBranch>>> query(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "parentId", required = false) String parentId,
+                                                                 @RequestParam(value = "parentName", required = false) String parentName, @RequestParam(value = "directorId", required = false) String directorId,
+                                                                 @RequestParam(value = "directorName", required = false) String directorName, @RequestParam("page") Integer page,
+                                                                 @RequestParam("size") Integer size) {
+        List<PartyBranch> list = branchService.getList(name, parentId, parentName, directorId, directorName, page, size);
+        return CommonResult.success(CommonList.restList(list));
     }
 
     @ApiOperation("创建党支部")
     @PostMapping("")
-    public Result create(@RequestBody PartyBranch branch) {
-        if (branchService.save(branch)) {
-            return Result.ok().data("id", branch.getId());
-        }
-        return Result.error().message("创建失败");
+    public ResponseEntity<Result<IdVO>> create(@RequestBody PartyBranch branch) {
+        branchService.create(branch);
+        return CommonResult.success(new IdVO(branch.getId()));
     }
 
     @ApiOperation("删除党支部")
@@ -74,11 +71,9 @@ public class PartyBranchController {
             @ApiImplicitParam(name = "id", value = "党支部id", type = "String", required = true)
     })
     @DeleteMapping("/{id}")
-    public Result remove(@PathVariable String id) {
-        if (branchService.removeById(id)) {
-            return Result.ok();
-        }
-        return Result.error().message("删除失败");
+    public ResponseEntity<Result<String>> remove(@PathVariable String id) {
+        branchService.remove(id);
+        return CommonResult.success("删除成功");
     }
 
     @ApiOperation("修改党支部id")
@@ -86,12 +81,10 @@ public class PartyBranchController {
             @ApiImplicitParam(name = "id", value = "党支部id", type = "String", required = true)
     })
     @PutMapping("/{id}")
-    public Result update(@PathVariable String id, @RequestBody PartyBranch branch) {
+    public ResponseEntity<Result<IdVO>> update(@PathVariable String id, @RequestBody PartyBranch branch) {
         branch.setId(id);
-        if (branchService.updateById(branch)) {
-            return Result.ok().data("id", id);
-        }
-        return Result.error().message("修改失败");
+        branchService.update(branch);
+        return CommonResult.success(new IdVO(id));
     }
 }
 

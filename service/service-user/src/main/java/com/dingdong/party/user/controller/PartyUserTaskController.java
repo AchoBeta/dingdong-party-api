@@ -1,6 +1,10 @@
 package com.dingdong.party.user.controller;
 
-import com.dingdong.party.commonUtils.result.Result;
+import com.dingdong.party.serviceBase.common.api.CommonItem;
+import com.dingdong.party.serviceBase.common.api.CommonList;
+import com.dingdong.party.serviceBase.common.api.CommonResult;
+import com.dingdong.party.serviceBase.common.api.Result;
+import com.dingdong.party.serviceBase.common.vo.IdVO;
 import com.dingdong.party.user.entity.PartyUserTask;
 import com.dingdong.party.user.service.PartyUserTaskService;
 import io.swagger.annotations.Api;
@@ -10,16 +14,17 @@ import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.Resource;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * <p>
  * 前端控制器
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-08-12
  */
 @RestController
@@ -35,12 +40,9 @@ public class PartyUserTaskController {
             @ApiImplicitParam(name = "id", value = "用户阶段id", required = true)
     })
     @GetMapping("/{id}")
-    public Result queryById(@PathVariable("id") String id) {
-        PartyUserTask userTask = userTaskService.getById(id);
-        if (userTask != null) {
-            return Result.ok().data("item", userTask);
-        }
-        return Result.error().message("用户阶段信息查询失败");
+    public ResponseEntity<Result<CommonItem<PartyUserTask>>> queryById(@PathVariable("id") String id) {
+        PartyUserTask userTask = userTaskService.queryById(id);
+        return CommonResult.success(CommonItem.restItem(userTask));
     }
 
     @ApiOperation("按条件查询用户阶段信息")
@@ -49,41 +51,31 @@ public class PartyUserTaskController {
             @ApiImplicitParam(name = "page", value = "页号"), @ApiImplicitParam(name = "size", value = "大小")
     })
     @GetMapping("")
-    public Result query(@RequestParam(value = "userId", required = false) String userId, @RequestParam(value = "task_id", required = false) Integer taskId,
+    public ResponseEntity<Result<CommonList<PartyUserTask>>> query(@RequestParam(value = "userId", required = false) String userId, @RequestParam(value = "task_id", required = false) Integer taskId,
                         @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
-        Map<String, Object> map = userTaskService.getList(userId, taskId, page, size);
-        if (map != null) {
-            return Result.ok().data("list", map);
-        }
-        return Result.error().message("查询失败");
+        List<PartyUserTask> list = userTaskService.getList(userId, taskId, page, size);
+        return CommonResult.success(CommonList.restList(list));
     }
 
     @ApiOperation("创建用户阶段信息")
     @PostMapping("")
-    public Result create(@RequestBody PartyUserTask userTask) {
-        if (userTaskService.save(userTask)) {
-            return Result.ok().data("id", userTask.getId());
-        }
-        return Result.error().message("创建失败");
+    public ResponseEntity<Result<IdVO>> create(@RequestBody PartyUserTask userTask) {
+        userTaskService.create(userTask);
+        return CommonResult.success(new IdVO(userTask.getId()));
     }
 
     @ApiOperation("更新用户信息")
     @PutMapping("/{id}")
-    public Result update(@RequestBody PartyUserTask userTask, @PathVariable("id") String id) {
-        userTask.setId(id);
-        if (userTaskService.updateById(userTask)) {
-            return Result.ok();
-        }
-        return Result.error().message("更新失败");
+    public ResponseEntity<Result<IdVO>> update(@RequestBody PartyUserTask userTask, @PathVariable("id") String id) {
+        userTaskService.update(userTask, id);
+        return CommonResult.success(new IdVO(id));
     }
 
     @ApiOperation("删除用户信息")
     @DeleteMapping("/{id}")
-    public Result delete(@PathVariable("id") String id) {
-        if (userTaskService.removeById(id)) {
-            return Result.ok();
-        }
-        return Result.error().message("删除失败");
+    public ResponseEntity<Result<String>> remove(@PathVariable("id") String id) {
+        userTaskService.remove(id);
+        return CommonResult.success("删除成功");
     }
 }
 

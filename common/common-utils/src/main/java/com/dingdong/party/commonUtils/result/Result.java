@@ -7,6 +7,9 @@ import lombok.Data;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author retraci
+ */
 @Data
 @ApiModel(value = "全局统一返回结果")
 public class Result {

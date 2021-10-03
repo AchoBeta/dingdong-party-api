@@ -1,10 +1,12 @@
 package com.dingdong.party.user.controller;
 
-import com.dingdong.party.commonUtils.result.Result;
+import com.dingdong.party.serviceBase.common.api.*;
+import com.dingdong.party.serviceBase.common.vo.NumVo;
 import com.dingdong.party.user.entity.vo.StageCountEntity;
 import com.dingdong.party.user.service.PartyStageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -15,7 +17,7 @@ import java.util.List;
  *  前端控制器
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-23
  */
 @RestController
@@ -28,44 +30,37 @@ public class PartyOthersController {
 
     @ApiOperation("获取最高期数")
     @GetMapping("/max-periods")
-    public Result queryPeriodsNum() {
+    public ResponseEntity<Result<NumVo>> queryPeriodsNum() {
         Integer num = stageService.queryPeriodsNum();
-        return Result.ok().data("num", num);
+        return CommonResult.success(new NumVo(num));
     }
 
     @ApiOperation("获取最高年级")
     @GetMapping("/max-grade")
-    public Result queryGradeNum() {
+    public ResponseEntity<Result<NumVo>> queryGradeNum() {
         Integer num = stageService.queryGradeNum();
-        return Result.ok().data("num", num);
+        return CommonResult.success(new NumVo(num));
     }
 
     @ApiOperation("修改最高期数")
     @PutMapping("/max-periods/{id}")
-    public Result updatePeriodsNum(@PathVariable String id, Integer periodsNum) {
-        if (stageService.updatePeriodsNum(id, periodsNum)) {
-            return Result.ok().message("修改成功");
-        }
-        return Result.error().message("修改失败");
+    public ResponseEntity<Result<String>> updatePeriodsNum(@PathVariable String id, Integer periodsNum) {
+        stageService.updatePeriodsNum(id, periodsNum);
+        return CommonResult.success("修改成功");
     }
 
     @ApiOperation("修改最高年级")
     @PutMapping("/max-grade/{id}")
-    public Result updateGradeNum(@PathVariable String id, Integer gradeNum) {
-        if (stageService.updateGradeNum(id, gradeNum)) {
-            return Result.ok().message("修改成功");
-        }
-        return Result.error().message("修改失败");
+    public ResponseEntity<Result<String>> updateGradeNum(@PathVariable String id, Integer gradeNum) {
+        stageService.updateGradeNum(id, gradeNum);
+        return CommonResult.success("修改成功");
     }
 
     @ApiOperation("统计各阶段人数")
     @GetMapping("/count")
-    public Result queryStageCount() {
+    public ResponseEntity<Result<CommonItems<StageCountEntity>>> queryStageCount() {
         List<StageCountEntity> list = stageService.queryStageCount();
-        if (list != null) {
-            return Result.ok().data("items", list);
-        }
-        return Result.error().message("获取失败");
+        return CommonResult.success(CommonItems.restItems(list));
     }
 
 }

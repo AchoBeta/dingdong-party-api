@@ -44,7 +44,7 @@ public class PartyFacultyController {
         List<PartyFaculty> list = facultyService.query(instituteId);
         if (list != null)
             return Result.ok().data("total", list.size()).data("list", list);
-        return Result.error().message("暂无记录");
+        return Result.error().message("暂无数据");
     }
 
     @ApiOperation("删除学院 / 专业")

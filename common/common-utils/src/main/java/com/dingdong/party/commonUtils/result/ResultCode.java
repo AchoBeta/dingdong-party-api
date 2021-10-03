@@ -3,6 +3,9 @@ package com.dingdong.party.commonUtils.result;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ * @author retraci
+ */
 @Getter
 @ToString
 public enum ResultCode {

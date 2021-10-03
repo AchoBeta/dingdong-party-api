@@ -15,7 +15,7 @@ import java.util.List;
  *  Mapper 接口
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-23
  */
 public interface PartyUserMapper extends BaseMapper<PartyUser> {
@@ -36,7 +36,12 @@ public interface PartyUserMapper extends BaseMapper<PartyUser> {
     @Select("select id from party_user where group_id = #{groupId}")
     List<String> queryUserByGroupId(String groupId);
 
-    // 查询用户参与的活动
+    /**
+     * 查询用户参与的活动
+     * @param userId
+     * @param status
+     * @return
+     */
     @Select("select b.*, a.partStatus " +
             "from " +
             "(select activity_id, status as partStatus from party_user_activity " +
@@ -46,6 +51,11 @@ public interface PartyUserMapper extends BaseMapper<PartyUser> {
             "where a.activity_id = b.id")
     List<UserActivityEntity> getUserActivity(String userId, Integer status);
 
+    /**
+     * 获取用户的所有活动
+     * @param userId
+     * @return
+     */
     @Select("select b.*, a.partStatus " +
             "from " +
             "(select activity_id, status as partStatus from party_user_activity " +
@@ -56,18 +66,36 @@ public interface PartyUserMapper extends BaseMapper<PartyUser> {
             "where a.activity_id = b.id")
     List<UserActivityEntity> getUserAllActivity(String userId);
 
-    @Select("select activity_id as activityId from party_user_activity where user_id = #{arg0} and activity_id = #{arg1}")
-    String getOneActivity(String userId, String activityId);
+    /**
+     * 获取一个活动
+     * @param userId
+     * @param activityId
+     * @return
+     */
+    @Select("select * " +
+            "from party_user_activity " +
+            "where user_id = #{arg0} and activity_id = #{arg1}")
+    List<UserActivityEntity> getOneActivity(String userId, String activityId);
 
-    // 获取用户的学院，年级，专业
+    /**
+     * 获取用户的学院，年级，专业
+     */
     @Select("select institute, grade, major from party_student where student_id = #{studentId}")
     HashMap<String, String> selectDetails(String studentId);
 
-    // 获取用户参与的期数
+    /**
+     * 获取用户参与的期数
+     * @param userId
+     * @return
+     */
     @Select("select count(*) from party_user_activity where user_id = #{userId} and status = 0 and is_deleted = 0")
     Integer getParticipatyNum(String userId);
 
-    // 查看用户评论
+    /**
+     * 查看用户评论
+     * @param userId
+     * @return
+     */
     @Select("select a.*, b.name from " +
             "(select activity_id as activityId, user_id as userId, content, image " +
             "from party_activity_comment where user_id = #{userId}) as a, " +

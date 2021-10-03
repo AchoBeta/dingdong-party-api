@@ -3,6 +3,7 @@
 <mapper namespace="com.dingdong.party.activity.mapper.PartyUserActivityMapper">
 
     <resultMap id="UserEntity" type="com.dingdong.party.activity.entity.vo.UserEntity"></resultMap>
+    <resultMap id="UserActivityVO" type="com.dingdong.party.activity.entity.vo.UserActivityVO"></resultMap>
 
     <select id="getAllUser" parameterType="String" resultMap="UserEntity">
         select a.*
@@ -24,15 +25,15 @@
 
     <select id="query" resultType="java.util.Map">
         SELECT a.activity_id as activityId,
+        a.status as status,
         b.name as name,
         b.student_id as studentId,
         b.teacher_id as teacherId,
-        d.id as branchId,
-        d.name as branchName,
+        b.stage as stage,
         c.id as groupId,
         c.name as groupName,
-        a.status as status,
-        b.stage as stage
+        d.id as branchId,
+        d.name as branchName
         FROM party_user_activity a,
         party_user b,
         party_group c,

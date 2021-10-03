@@ -14,10 +14,10 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-17
  */
 @Data
@@ -49,6 +49,9 @@ public class PartyUserActivity implements Serializable {
 
     @ApiModelProperty(value = "党支部id")
     private String branchId;
+
+    @ApiModelProperty(value = "是否为老师")
+    private Boolean isTeacher;
 
     @ApiModelProperty(value = "逻辑删除")
     @JsonIgnore

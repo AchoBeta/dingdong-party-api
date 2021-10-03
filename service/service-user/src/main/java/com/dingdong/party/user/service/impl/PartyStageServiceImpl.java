@@ -1,5 +1,7 @@
 package com.dingdong.party.user.service.impl;
 
+import com.dingdong.party.serviceBase.common.api.ResultCode;
+import com.dingdong.party.serviceBase.exception.PartyException;
 import com.dingdong.party.user.entity.PartyStage;
 import com.dingdong.party.user.entity.vo.StageCountEntity;
 import com.dingdong.party.user.entity.vo.StageEntity;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
  *  服务实现类
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-23
  */
 @Service
@@ -34,7 +36,11 @@ public class PartyStageServiceImpl extends ServiceImpl<PartyStageMapper, PartySt
 
     @Override
     public List<PartyStage> queryAllStageAndTask() {
-        return stageMapper.selectList(null);
+        List<PartyStage> list = stageMapper.selectList(null);
+        if (list == null) {
+            throw new PartyException("查询失败", ResultCode.COMMON_FAIL.getCode());
+        }
+        return list;
     }
 
     @Override
@@ -47,29 +53,66 @@ public class PartyStageServiceImpl extends ServiceImpl<PartyStageMapper, PartySt
         return stageEntity;
     }
 
-    // 获取当前最高的期数
+    @Override
+    public void remove(String id) {
+        boolean res = this.removeById(id);
+        if (!res) {
+            throw new PartyException("删除失败", ResultCode.COMMON_FAIL.getCode());
+        }
+    }
+
+    @Override
+    public void update(PartyStage stage) {
+        boolean res = this.updateById(stage);
+        if (!res) {
+            throw new PartyException("更新失败", ResultCode.COMMON_FAIL.getCode());
+        }
+    }
+
+    @Override
+    public PartyStage queryById(String id) {
+        PartyStage stage = this.getById(id);
+        if (stage == null) {
+            throw new PartyException("查询失败", ResultCode.COMMON_FAIL.getCode());
+        }
+
+        return stage;
+    }
+
+    @Override
+    public void create(PartyStage stage) {
+        boolean res = this.save(stage);
+        if (!res) {
+            throw new PartyException("创建失败", ResultCode.COMMON_FAIL.getCode());
+        }
+    }
+
     @Override
     public Integer queryPeriodsNum() {
         return stageMapper.queryNum("12462534234");
     }
 
-    // 获取当前最高的年级
     @Override
     public Integer queryGradeNum() {
         return stageMapper.queryNum("14192307563");
     }
 
     @Override
-    public Boolean updatePeriodsNum(String id, Integer periodsNum) {
-        return stageMapper.updateNum(id, periodsNum);
+    public void updatePeriodsNum(String id, Integer periodsNum) {
+        Boolean res = stageMapper.updateNum(id, periodsNum);
+        if (!res) {
+            throw new PartyException("修改失败", ResultCode.COMMON_FAIL.getCode());
+        }
     }
 
     @Override
-    public Boolean updateGradeNum(String id, Integer gradeNum) {
-        return stageMapper.updateNum(id, gradeNum);
+    public void updateGradeNum(String id, Integer gradeNum) {
+        Boolean res = stageMapper.updateNum(id, gradeNum);
+        if (!res) {
+            throw new PartyException("修改失败", ResultCode.COMMON_FAIL.getCode());
+        }
     }
 
-    // 获取数据
     @Override
     public List<StageCountEntity> queryStageCount() {
         System.out.println(1);

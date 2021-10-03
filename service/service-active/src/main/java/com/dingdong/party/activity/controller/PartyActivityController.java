@@ -1,27 +1,31 @@
 package com.dingdong.party.activity.controller;
 
 import com.dingdong.party.activity.entity.PartyActivity;
-import com.dingdong.party.activity.entity.PartyActivityDetails;
 import com.dingdong.party.activity.entity.vo.ActivityDetailsEntity;
 import com.dingdong.party.activity.service.PartyActivityDetailsService;
 import com.dingdong.party.activity.service.PartyActivityService;
-import com.dingdong.party.commonUtils.result.Result;
+
+import com.dingdong.party.serviceBase.common.api.CommonItem;
+import com.dingdong.party.serviceBase.common.api.CommonList;
+import com.dingdong.party.serviceBase.common.api.CommonResult;
+import com.dingdong.party.serviceBase.common.api.Result;
+import com.dingdong.party.serviceBase.common.vo.IdVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Map;
+import java.util.List;
 
 /**
  * <p>
  * 前端控制器
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-16
  */
 @RestController
@@ -40,18 +44,9 @@ public class PartyActivityController {
             @ApiImplicitParam(name = "id", value = "活动id", required = true, type = "String")
     })
     @GetMapping("/{id}")
-    public Result queryById(@PathVariable String id) {
-        PartyActivity activity = activityService.getById(id);
-        System.out.println(activity);
-        PartyActivityDetails details = detailsService.getById(id);
-        if (activity != null) {
-            ActivityDetailsEntity detailsEntity = new ActivityDetailsEntity();
-            BeanUtils.copyProperties(activity, detailsEntity);
-            BeanUtils.copyProperties(details, detailsEntity);
-            System.out.println(detailsEntity);
-            return Result.ok().data("item", detailsEntity);
-        }
-        return Result.error().message("查询失败");
+    public ResponseEntity<Result<CommonItem<ActivityDetailsEntity>>> queryById(@PathVariable String id) {
+        ActivityDetailsEntity activity = activityService.queryById(id);
+        return CommonResult.success(CommonItem.restItem(activity));
     }
 
     @ApiOperation("按条件分页查询活动")
@@ -63,26 +58,20 @@ public class PartyActivityController {
             @ApiImplicitParam(name = "page", value = "页号", type = "int"), @ApiImplicitParam(name = "size", value = "大小", type = "int")
     })
     @GetMapping("")
-    public Result query(@RequestParam(value = "name", required = false) String name,
-                        @RequestParam(value = "branchId", required = false) String branchId, @RequestParam(value = "startTime", required = false) String startTime,
-                        @RequestParam(value = "endTime", required = false) String endTime, @RequestParam(value = "directorId", required = false) String directorId,
-                        @RequestParam(value = "directorName", required = false) String directorName, @RequestParam(value = "status", required = false) Integer status,
-                        @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
-        Map<Object, Object> map = activityService.getList(name, branchId, startTime, endTime, directorId, directorName, status, page, size);
-        if (map != null) {
-            return Result.ok().data("list", map);
-        }
-        return Result.error().message("查无数据");
+    public ResponseEntity<Result<CommonList<PartyActivity>>> query(@RequestParam(value = "name", required = false) String name,
+                                                                   @RequestParam(value = "branchId", required = false) String branchId, @RequestParam(value = "startTime", required = false) String startTime,
+                                                                   @RequestParam(value = "endTime", required = false) String endTime, @RequestParam(value = "directorId", required = false) String directorId,
+                                                                   @RequestParam(value = "directorName", required = false) String directorName, @RequestParam(value = "status", required = false) Integer status,
+                                                                   @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+        List<PartyActivity> list = activityService.getList(name, branchId, startTime, endTime, directorId, directorName, status, page, size);
+        return CommonResult.success(CommonList.restList(list));
     }
 
     @ApiOperation("创建活动")
     @PostMapping("")
-    public Result create(@RequestBody ActivityDetailsEntity activity) throws Exception {
-        String activityId = activityService.create(activity);
-        if (activityId != null) {
-            return Result.ok().data("activityId", activityId);
-        }
-        return Result.error().message("创建失败");
+    public ResponseEntity<Result<IdVO>> create(@RequestBody ActivityDetailsEntity activity) {
+        activityService.create(activity);
+        return CommonResult.success(new IdVO(activity.getId()));
     }
 
     @ApiOperation("删除活动")
@@ -90,9 +79,9 @@ public class PartyActivityController {
             @ApiImplicitParam(name = "id", value = "活动id", required = true, type = "String")
     })
     @DeleteMapping("/{id}")
-    public Result delete(@PathVariable String id) {
-        activityService.deleteById(id);
-        return Result.ok();
+    public ResponseEntity<Result<String>> remove(@PathVariable String id) {
+        activityService.remove(id);
+        return CommonResult.success("删除成功");
     }
 
     @ApiOperation("修改活动")
@@ -100,20 +89,17 @@ public class PartyActivityController {
             @ApiImplicitParam(name = "id", value = "活动id", required = true, type = "String")
     })
     @PutMapping("/{id}")
-    public Result update(@PathVariable String id, @RequestBody ActivityDetailsEntity detailsEntity) {
-        detailsEntity.setId(id);
-        activityService.modify(detailsEntity);
-        return Result.ok().data("id", id);
+    public ResponseEntity<Result<IdVO>> update(@PathVariable String id, @RequestBody ActivityDetailsEntity detailsEntity) {
+        activityService.update(id, detailsEntity);
+        return CommonResult.success(new IdVO(id));
     }
 
 
     @ApiOperation("活动提交审核")
     @PostMapping("/{activityId}/commit")
-    public Result commit(@PathVariable("activityId") String activityId) {
-        if (activityService.commit(activityId)) {
-            return Result.ok();
-        }
-        return Result.error().message("提交失败");
+    public ResponseEntity<Result<String>> commit(@PathVariable("activityId") String activityId) {
+        activityService.commit(activityId);
+        return CommonResult.success("提交成功");
     }
 
 }

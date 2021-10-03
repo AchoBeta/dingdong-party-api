@@ -2,13 +2,17 @@ package com.dingdong.party.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.dingdong.party.serviceBase.common.api.ResultCode;
+import com.dingdong.party.serviceBase.exception.PartyException;
 import com.dingdong.party.user.entity.PartyGroup;
 import com.dingdong.party.user.mapper.PartyGroupMapper;
 import com.dingdong.party.user.service.PartyGroupService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,33 +20,67 @@ import java.util.Map;
  *  服务实现类
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-23
  */
 @Service
 public class PartyGroupServiceImpl extends ServiceImpl<PartyGroupMapper, PartyGroup> implements PartyGroupService {
 
     @Override
-    public Map<Object, Object> getList(String name, String branchId, String branchName, String directorId, String directorName, Integer page, Integer size) {
+    public List<PartyGroup> getList(String name, String branchId, String branchName, String directorId, String directorName, Integer page, Integer size) {
+        PageHelper.startPage(page, size);
+
         QueryWrapper<PartyGroup> wrapper = new QueryWrapper<>();
-        if (name != null)
+        if (name != null) {
             wrapper.like("name", name);
-        if (branchId != null)
+        }
+        if (branchId != null) {
             wrapper.eq("branch_id", branchId);
-        if (branchName != null)
+        }
+        if (branchName != null) {
             wrapper.like("branch_name", branchName);
-        if (directorId != null)
+        }
+        if (directorId != null) {
             wrapper.eq("director_id", directorId);
-        if (directorName != null)
+        }
+        if (directorName != null) {
             wrapper.like("director_name", directorName);
-        Page<PartyGroup> pageGroup = new Page<>();
-        this.page(pageGroup, wrapper);
-        long total = pageGroup.getTotal();
-        if (total == 0)
-            return null;
-        HashMap<Object, Object> map = new HashMap<>(2);
-        map.put("total", total);
-        map.put("items", pageGroup.getRecords());
-        return map;
+        }
+
+        return this.list(wrapper);
+    }
+
+    @Override
+    public PartyGroup queryById(String id) {
+        PartyGroup group = this.getById(id);
+        if (group == null) {
+            throw new PartyException("查询失败", ResultCode.COMMON_FAIL.getCode());
+        }
+
+        return group;
+    }
+
+    @Override
+    public void create(PartyGroup group) {
+        boolean res = this.save(group);
+        if (!res) {
+            throw new PartyException("创建失败", ResultCode.COMMON_FAIL.getCode());
+        }
+    }
+
+    @Override
+    public void remove(String id) {
+        boolean res = this.removeById(id);
+        if (!res) {
+            throw new PartyException("删除失败", ResultCode.COMMON_FAIL.getCode());
+        }
+    }
+
+    @Override
+    public void update(PartyGroup group) {
+        boolean res = this.updateById(group);
+        if (!res) {
+            throw new PartyException("更新失败", ResultCode.COMMON_FAIL.getCode());
+        }
     }
 }

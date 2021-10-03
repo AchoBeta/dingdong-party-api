@@ -2,11 +2,14 @@ package com.dingdong.party.activity.controller;
 
 import com.dingdong.party.activity.entity.PartyActivityDetails;
 import com.dingdong.party.activity.service.PartyActivityDetailsService;
-import com.dingdong.party.commonUtils.result.Result;
+import com.dingdong.party.serviceBase.common.api.CommonItem;
+import com.dingdong.party.serviceBase.common.api.CommonResult;
+import com.dingdong.party.serviceBase.common.api.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +23,7 @@ import javax.annotation.Resource;
  *  前端控制器
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-16
  */
 @RestController
@@ -36,12 +39,9 @@ public class PartyActivityDetailsController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "activityId", value = "活动id", type = "String", required = true)
     })
-    public Result queryByActivityId(@PathVariable String activityId) {
-        PartyActivityDetails details = detailsService.getById(activityId);
-        if (details != null) {
-            return Result.ok().data("item", details);
-        }
-        return Result.error().message("获取失败");
+    public ResponseEntity<Result<CommonItem<PartyActivityDetails>>> queryByActivityId(@PathVariable String activityId) {
+        PartyActivityDetails details = detailsService.queryByActivityId(activityId);
+        return CommonResult.success(CommonItem.restItem(details));
     }
 
 }

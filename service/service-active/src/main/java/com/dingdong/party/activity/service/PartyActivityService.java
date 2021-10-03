@@ -3,29 +3,79 @@ package com.dingdong.party.activity.service;
 import com.dingdong.party.activity.entity.PartyActivity;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.dingdong.party.activity.entity.vo.ActivityDetailsEntity;
-import org.apache.ibatis.annotations.Update;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-16
  */
 public interface PartyActivityService extends IService<PartyActivity> {
 
-    Map<Object, Object> getList(String name, String branchId, String startTime, String endTime, String directorId, String directorName, Integer status, Integer page, Integer size);
+    /**
+     * 分页
+     *
+     * @param name
+     * @param branchId
+     * @param startTime
+     * @param endTime
+     * @param directorId
+     * @param directorName
+     * @param status
+     * @param page
+     * @param size
+     * @return
+     */
+    List<PartyActivity> getList(String name, String branchId, String startTime, String endTime, String directorId, String directorName, Integer status, Integer page, Integer size);
 
-    String create(ActivityDetailsEntity activity) throws Exception;
+    /**
+     * 获取全部
+     *
+     * @param page
+     * @param size
+     * @return
+     */
+    List<PartyActivity> queryAll(Integer page, Integer size);
 
-    boolean deleteById(String id);
+    /**
+     * 查询
+     *
+     * @param id
+     * @return
+     */
+    ActivityDetailsEntity queryById(String id);
 
-    boolean modify(ActivityDetailsEntity detailsEntity);
+    /**
+     * 创建
+     *
+     * @param activity
+     */
+    void create(ActivityDetailsEntity activity);
 
-    boolean commit(String activityId);
+    /**
+     * 删除
+     *
+     * @param id
+     */
+    void remove(String id);
 
-    Map<String, Object> queryAll(Integer page, Integer size);
+    /**
+     * 更新
+     *
+     * @param id
+     * @param detailsEntity
+     */
+    void update(String id, ActivityDetailsEntity detailsEntity);
+
+    /**
+     * 提交
+     *
+     * @param activityId
+     */
+    void commit(String activityId);
+
 }

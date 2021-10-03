@@ -5,7 +5,7 @@ import com.dingdong.party.admin.entity.PartyFaculty;
 import com.dingdong.party.admin.mapper.PartyFacultyMapper;
 import com.dingdong.party.admin.service.PartyFacultyService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.dingdong.party.commonUtils.result.ResultCode;
+import com.dingdong.party.serviceBase.common.api.ResultCode;
 import com.dingdong.party.serviceBase.exception.PartyException;
 import org.springframework.stereotype.Service;
 

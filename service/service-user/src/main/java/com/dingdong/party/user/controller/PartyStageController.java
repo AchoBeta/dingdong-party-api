@@ -1,6 +1,6 @@
 package com.dingdong.party.user.controller;
 
-import com.dingdong.party.commonUtils.result.Result;
+import com.dingdong.party.serviceBase.common.api.*;
 import com.dingdong.party.user.entity.PartyStage;
 import com.dingdong.party.user.service.PartyStageService;
 import com.dingdong.party.user.service.PartyTaskService;
@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,7 +19,7 @@ import java.util.List;
  *  前端控制器
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-23
  */
 @RestController
@@ -37,21 +38,16 @@ public class PartyStageController {
             @ApiImplicitParam(name = "id", value = "入党阶段id", type = "String", required = true)
     })
     @GetMapping("/{id}")
-    public Result queryById(@PathVariable String id) {
-        PartyStage stage = partyStageService.getById(id);
-        if (stage != null){
-            return Result.ok().data("item", stage);
-        }
-        return Result.error().message("无此记录");
+    public ResponseEntity<Result<CommonItem<PartyStage>>> queryById(@PathVariable String id) {
+        PartyStage stage = partyStageService.queryById(id);
+        return CommonResult.success(CommonItem.restItem(stage));
     }
 
     @PostMapping("")
     @ApiOperation("创建入党阶段")
-    public Result create(@RequestBody PartyStage stage) {
-        if (partyStageService.save(stage)) {
-            return Result.ok();
-        }
-        return Result.error().message("创建失败");
+    public ResponseEntity<Result<String>> create(@RequestBody PartyStage stage) {
+        partyStageService.create(stage);
+        return CommonResult.success("创建成功");
     }
 
     @DeleteMapping("/{id}")
@@ -59,11 +55,9 @@ public class PartyStageController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "入党阶段id", type = "String", required = true)
     })
-    public Result delete(@PathVariable String id) {
-        if (partyStageService.removeById(id)) {
-            return Result.ok();
-        }
-        return Result.error().message("删除失败");
+    public ResponseEntity<Result<String>> remove(@PathVariable String id) {
+        partyStageService.remove(id);
+        return CommonResult.success("删除成功");
     }
 
     @PutMapping("/{id}")
@@ -71,22 +65,17 @@ public class PartyStageController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "入党阶段id", type = "String", required = true)
     })
-    public Result update(@PathVariable("id") Integer id, @RequestBody PartyStage stage) {
+    public ResponseEntity<Result<String>> update(@PathVariable("id") Integer id, @RequestBody PartyStage stage) {
         stage.setId(id);
-        if (partyStageService.updateById(stage)) {
-            return Result.ok();
-        }
-        return Result.error().message("更新失败");
+        partyStageService.update(stage);
+        return CommonResult.success("更新成功");
     }
 
     @ApiOperation("获取所有入党阶段")
     @GetMapping("")
-    public Result queryAllStageAndTask() {
+    public ResponseEntity<Result<CommonItems<PartyStage>>> queryAllStageAndTask() {
         List<PartyStage> list = partyStageService.queryAllStageAndTask();
-        if (list != null) {
-            return Result.ok().data("items", list);
-        }
-        return Result.error().message("获取失败");
+        return CommonResult.success(CommonItems.restItems(list));
     }
 
 }

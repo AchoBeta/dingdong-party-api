@@ -1,25 +1,28 @@
 package com.dingdong.party.user.controller;
 
-import com.dingdong.party.commonUtils.result.Result;
-import com.dingdong.party.user.entity.PartyStudent;
+import com.dingdong.party.serviceBase.common.api.CommonItem;
+import com.dingdong.party.serviceBase.common.api.CommonList;
+import com.dingdong.party.serviceBase.common.api.CommonResult;
+import com.dingdong.party.serviceBase.common.api.Result;
+import com.dingdong.party.serviceBase.common.vo.IdVO;
 import com.dingdong.party.user.entity.vo.StudentEntity;
 import com.dingdong.party.user.service.PartyStudentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Map;
+import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
- * @author testjava
+ * @author retraci
  * @since 2021-07-23
  */
 @RestController
@@ -35,14 +38,9 @@ public class PartyStudentController {
             @ApiImplicitParam(name = "studentNo", value = "学号", type = "String", required = true)
     })
     @GetMapping("/{studentNo}")
-    public Result queryById(@PathVariable String studentNo) {
-        PartyStudent student = studentService.getById(studentNo);
-        if (student != null) {
-            StudentEntity studentEntity = new StudentEntity();
-            BeanUtils.copyProperties(student, studentEntity);
-            return Result.ok().data("student", studentEntity);
-        }
-        return Result.error().message("学生暂无记录");
+    public ResponseEntity<Result<CommonItem<StudentEntity>>> queryById(@PathVariable String studentNo) {
+        StudentEntity student = studentService.queryStudentById(studentNo);
+        return CommonResult.success(CommonItem.restItem(student));
     }
 
     @ApiOperation("按条件分页查询学生")
@@ -54,15 +52,12 @@ public class PartyStudentController {
             @ApiImplicitParam(name = "size", value = "大小", type = "int"),
     })
     @GetMapping("")
-    public Result query(@RequestParam(value = "branchId", required = false) String branchId, @RequestParam(value = "groupId", required = false) String groupId,
-                        @RequestParam(value = "institute", required = false) String institute, @RequestParam(value = "grade", required = false) String grade,
-                        @RequestParam(value = "major", required = false) String major, @RequestParam(value = "className", required = false) String className,
-                        @RequestParam(value = "dormitoryArea", required = false) String dormitoryArea, @RequestParam("page") int page, @RequestParam("size") int size) {
-        Map<Object, Object> list = studentService.getList(branchId, groupId, institute, grade, major, className, dormitoryArea , page, size);
-        if (list != null) {
-            return Result.ok().data("list", list);
-        }
-        return Result.error().message("查无数据");
+    public ResponseEntity<Result<CommonList<StudentEntity>>> query(@RequestParam(value = "branchId", required = false) String branchId, @RequestParam(value = "groupId", required = false) String groupId,
+                                                                   @RequestParam(value = "institute", required = false) String institute, @RequestParam(value = "grade", required = false) String grade,
+                                                                   @RequestParam(value = "major", required = false) String major, @RequestParam(value = "className", required = false) String className,
+                                                                   @RequestParam(value = "dormitoryArea", required = false) String dormitoryArea, @RequestParam("page") int page, @RequestParam("size") int size) {
+        List<StudentEntity> list = studentService.getList(branchId, groupId, institute, grade, major, className, dormitoryArea, page, size);
+        return CommonResult.success(CommonList.restList(list));
     }
 
     /**
@@ -70,13 +65,9 @@ public class PartyStudentController {
      */
     @PostMapping("")
     @ApiOperation("创建学生")
-    public Result create(@RequestBody StudentEntity studentEntity) {
-        PartyStudent student = new PartyStudent();
-        BeanUtils.copyProperties(studentEntity, student);
-        if (studentService.save(student)) {
-            return Result.ok().data("studentNo", student.getStudentId());
-        }
-        return Result.error().message("创建用户失败");
+    public ResponseEntity<Result<IdVO>> create(@RequestBody StudentEntity studentEntity) {
+        studentService.create(studentEntity);
+        return CommonResult.success(new IdVO(studentEntity.getStudentId()));
     }
 
     /**
@@ -87,14 +78,9 @@ public class PartyStudentController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "studentId", value = "学号", type = "String", required = true)
     })
-    public Result update(@PathVariable("studentId") String studentId, @RequestBody StudentEntity studentEntity) {
-        PartyStudent student = new PartyStudent();
-        BeanUtils.copyProperties(studentEntity, student);
-        student.setStudentId(studentId);
-        if (studentService.updateById(student)) {
-            return Result.ok().data("studentNo", studentId);
-        }
-        return Result.error().message("更新用户失败");
+    public ResponseEntity<Result<IdVO>> update(@PathVariable("studentId") String studentId, @RequestBody StudentEntity studentEntity) {
+        studentService.update(studentId, studentEntity);
+        return CommonResult.success(new IdVO(studentId));
     }
 
     /**
@@ -105,11 +91,8 @@ public class PartyStudentController {
             @ApiImplicitParam(name = "studentNo", value = "学号", type = "String", required = true)
     })
     @DeleteMapping("/{studentNo}")
-    public Result delete(@PathVariable("studentNo") String studentNo) {
-        if (studentService.removeById(studentNo)) {
-            return Result.ok().message("删除成功");
-        }
-        return Result.error().message("删除失败");
+    public ResponseEntity<Result<String>> remove(@PathVariable("studentNo") String studentNo) {
+        return CommonResult.success("删除成功");
     }
 }
 
