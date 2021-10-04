@@ -11,10 +11,10 @@ spring:
     active: pro
 
   redis:
-    host: 106.52.192.138
+    host: xxxx
     port: 6379
     database: 0
-    password: achobeta
+    password: xxxx
     timeout: 1800000
 
 management:

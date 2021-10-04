@@ -2,16 +2,16 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://106.52.192.138:3306/dingdong_party?useUnicode=true&characterEncoding=utf-8
-    username: dingdongParty
-    password: achobeta
+    url: jdbc:mysql://xxxx:3306/dingdong_party?useUnicode=true&characterEncoding=utf-8
+    username: xxxx
+    password: xxxx
 
   redis:
-    host: 106.52.192.138
+    host: xxxx
     port: 6379
     database: 0
     timeout: 1800000
-    password: achobeta
+    password: xxxx
 
 # redis 不用密码（测试环境）
 management:
