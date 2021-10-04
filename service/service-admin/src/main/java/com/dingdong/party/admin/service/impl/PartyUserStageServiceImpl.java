@@ -6,7 +6,10 @@ import com.dingdong.party.admin.mapper.PartyUserStageMapper;
 import com.dingdong.party.admin.service.PartyUserStageService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import javax.annotation.Resource;
+
+import com.dingdong.party.serviceBase.exception.PartyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -38,8 +41,10 @@ public class PartyUserStageServiceImpl extends ServiceImpl<PartyUserStageMapper,
     public boolean updateStageByUserIds(String[] userIds, Integer stageId, Date time) {
         for (String userId : userIds) {
             QueryWrapper<PartyUserStage> wrapper = new QueryWrapper<>();
-            if (!userStageMapper.updateStage(userId, stageId) || !updateOrSave(wrapper, userId, stageId, time))   // 修改用户表的阶段
+            // 修改用户表的阶段
+            if (!userStageMapper.updateStage(userId, stageId) || !updateOrSave(wrapper, userId, stageId, time)) {
                 return false;
+            }
         }
         return true;
     }
@@ -55,18 +60,24 @@ public class PartyUserStageServiceImpl extends ServiceImpl<PartyUserStageMapper,
      * @return
      */
     @Override
+    @Transactional(rollbackFor = PartyException.class)
     public boolean updateStageByCondition(String branchId, String groupId, Integer stage, Integer stageId, String institute, Integer grade, String major, String[] userIds, Date time) {
         Set<String> userIdSet = new HashSet<>();
         for (String userId : userIds) {
             userIdSet.add(userId);
         }
-        List<String> userIdList = userStageMapper.getUser(branchId, groupId, stage, institute, grade, major);  // 获取需要改变的用户
+        // 获取需要改变的用户
+        List<String> userIdList = userStageMapper.getUser(branchId, groupId, stage, institute, grade, major);
         QueryWrapper<PartyUserStage> wrapper = new QueryWrapper<>();
         for (String userId : userIdList) {
-            if (userIdSet.contains(userId))   // 去掉选中的用户
+            // 去掉选中的用户
+            if (userIdSet.contains(userId)) {
                 continue;
-            if (!userStageMapper.updateStage(userId, stageId) || !updateOrSave(wrapper, userId, stageId, time))   // 修改用户表的阶段
-                return false;
+            }
+            // 修改用户表的阶段
+            if (!userStageMapper.updateStage(userId, stageId) || !updateOrSave(wrapper, userId, stageId, time)) {
+                throw new PartyException("修改用户失败", 500);
+            }
         }
         return true;
     }

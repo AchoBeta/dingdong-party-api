@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * 根据账号获取管理员信息
      */
     @Override
+    @Transactional(rollbackFor = PartyException.class)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if (username == null || username.length() == 0) {
             throw new RuntimeException("用户名不能为空");

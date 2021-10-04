@@ -39,6 +39,7 @@ public class WXServiceImpl implements WXService {
         }
     }
 
+    @Override
     public void uniformMessage (String openId) throws Exception {
         String access_token = getAccessToken();
         String url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token="

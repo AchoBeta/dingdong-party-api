@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -76,6 +77,7 @@ public class PartyActivityServiceImpl extends ServiceImpl<PartyActivityMapper, P
     }
 
     @Override
+    @Transactional(rollbackFor = PartyException.class)
     public void create(ActivityDetailsEntity activityDetailsEntity) {
         PartyActivity activity = new PartyActivity();
         BeanUtils.copyProperties(activityDetailsEntity, activity);
@@ -102,6 +104,7 @@ public class PartyActivityServiceImpl extends ServiceImpl<PartyActivityMapper, P
     }
 
     @Override
+    @Transactional(rollbackFor = PartyException.class)
     public void update(String id, ActivityDetailsEntity detailsEntity) {
         PartyActivity activity = new PartyActivity();
         BeanUtils.copyProperties(detailsEntity, activity);
@@ -115,7 +118,6 @@ public class PartyActivityServiceImpl extends ServiceImpl<PartyActivityMapper, P
             throw new PartyException("修改活动细节异常", ResultCode.COMMON_FAIL.getCode());
         }
     }
-
 
     @Override
     public void commit(String activityId) {

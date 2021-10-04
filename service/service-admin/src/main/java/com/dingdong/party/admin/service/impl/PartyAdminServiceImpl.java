@@ -129,17 +129,21 @@ public class PartyAdminServiceImpl extends ServiceImpl<PartyAdminMapper, PartyAd
     @Override
     public Map<String, Object> getList(String groupId, String branchId, Integer authority, Integer page, Integer size) {
         QueryWrapper<PartyAdmin> wrapper = new QueryWrapper<>();
-        if (groupId != null)
+        if (groupId != null) {
             wrapper.eq("group_id", groupId);
-        if (branchId != null)
+        }
+        if (branchId != null) {
             wrapper.eq("branch_id", branchId);
-        if (authority != null)
+        }
+        if (authority != null) {
             wrapper.eq("authority", authority);
+        }
         Page<PartyAdmin> adminPage = new Page<>(page, size);
         this.page(adminPage, wrapper);
         long total = adminPage.getTotal();
-        if (total == 0)
+        if (total == 0) {
             return null;
+        }
         List<UserAdminEntity> list = new ArrayList<>();
         for (int i = 0; i < total; i++) {
             PartyAdmin admin = adminPage.getRecords().get(i);

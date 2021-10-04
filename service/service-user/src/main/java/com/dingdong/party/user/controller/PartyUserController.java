@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -160,6 +161,7 @@ public class PartyUserController {
             @ApiImplicitParam(name = "openId", value = "微信开放id", required = true)
     })
     @PostMapping("/login")
+    @Transactional
     public ResponseEntity<Result<LoginVO>> login(@RequestParam String openId) {
         PartyUser partyUser = userService.queryByOpenId(openId);
         if (partyUser == null) {
