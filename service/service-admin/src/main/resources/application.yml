@@ -25,11 +25,11 @@ mybatis-plus:
 wx:
   open:
     # 微信开放平台 appid
-    app_id: wxb5922ce236fc32c4
+    app_id: xxxx
     # 微信开放平台 appsecret
-    app_secret: f99b9fb8fe486580b9a813179a10a0a6
+    app_secret: xxxx
     # 公众号 openid
-    open_id: wx17c0761b89cf01e9
+    open_id: xxxx
 
 application:
   login-url: /login
